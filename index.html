@@ -111,9 +111,9 @@
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="text-center md:text-left w-full md:w-auto">
                 <h1 class="text-lg md:text-2xl font-bold flex items-center justify-center md:justify-start gap-2">
-                    <i class="fas fa-ship text-yellow-400"></i> Panduan Draught Survey
+                    <i class="fas fa-ship text-yellow-400"></i> Panduan Draught Survey Curah Padat
                 </h1>
-                <p class="text-slate-400 text-xs md:text-sm mt-1">Simulasi Editable & Generator Data (Situbar)</p>
+                <p class="text-slate-400 text-xs md:text-sm mt-1">Simulasi Generator Data (Situbar) Curah Padat</p>
             </div>
             <div class="flex gap-3 w-full md:w-auto justify-center">
                 <button onclick="generateAllData()" class="bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-bold py-2.5 px-5 rounded-lg shadow-md transition transform active:scale-95 md:hover:scale-105 text-sm md:text-base w-full md:w-auto flex items-center justify-center gap-2">
@@ -700,7 +700,7 @@
         <div class="bg-blue-600 text-white p-3 md:p-4 rounded-t-xl flex justify-between items-center shadow-md">
             <div class="flex items-center gap-2">
                 <i class="fas fa-robot"></i>
-                <span class="font-bold text-sm md:text-base">Asisten Situbar (Gemini AI)</span>
+                <span class="font-bold text-sm md:text-base">Asisten Simulasi Situbar BC Banjarmasin</span>
             </div>
             <button onclick="toggleChat()" class="hover:text-gray-200 transition-colors"><i class="fas fa-times"></i></button>
         </div>
@@ -710,7 +710,7 @@
             <!-- Welcome Message -->
             <div class="flex justify-start">
                 <div class="bg-white border border-slate-200 text-slate-700 p-3 rounded-lg rounded-tl-none max-w-[85%] shadow-sm prose">
-                    Halo! Saya Asisten AI Situbar yang ditenagai oleh Google Gemini. 🤖
+                    Halo! Saya Asisten AI Simulasi Situbar BC Banjarmasin. 🤖
                     <br><br>
                     Tanyakan apa saja tentang Draught Survey, istilah teknis, atau cara perhitungan!
                 </div>
@@ -975,7 +975,7 @@
         }
 
         // --- GEMINI AI CHATBOT LOGIC ---
-        const apiKey = ""; // API Key disuntikkan secara otomatis di environment preview
+        const apiKey = "AIzaSyAlBh48kTBAKorscWeDrE78c_4wEyiKeNQ"; // API Key disuntikkan secara otomatis di environment preview
 
         async function getAIResponse(input) {
             // 1. Coba Panggil API Gemini (Jika Key Tersedia)
