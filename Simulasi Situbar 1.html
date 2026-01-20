@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan & Data Dummy Draught Survey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .input-dummy {
+            background-color: #f9fafb;
+            border: 1px solid #d1d5db;
+            color: #1f2937;
+            font-family: monospace;
+            font-weight: 600;
+        }
+        .section-title {
+            border-left: 4px solid #2563eb;
+            padding-left: 10px;
+            color: #1e3a8a;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white p-6 shadow-lg">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold"><i class="fas fa-ship mr-2"></i>Panduan Draught Survey</h1>
+                <p class="text-slate-400 text-sm">Referensi Data Dummy & Penjelasan Sumber Data</p>
+            </div>
+            <div class="mt-4 md:mt-0 bg-slate-800 px-4 py-2 rounded-lg border border-slate-700">
+                <span class="text-xs text-slate-400 block">Kapal Simulasi</span>
+                <span class="font-bold text-yellow-400">MV. CONTOH NIAGA</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="max-w-6xl mx-auto mt-6 px-4">
+        <div class="flex flex-wrap gap-2 border-b border-slate-300">
+            <button onclick="switchTab('initial')" id="btn-initial" class="px-6 py-3 font-semibold text-blue-600 border-b-2 border-blue-600 bg-white rounded-t-lg transition hover:bg-blue-50">
+                1. Data Initial (Kosong)
+            </button>
+            <button onclick="switchTab('final')" id="btn-final" class="px-6 py-3 font-semibold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:bg-white rounded-t-lg transition">
+                2. Data Final (Muat)
+            </button>
+            <button onclick="switchTab('guide')" id="btn-guide" class="px-6 py-3 font-semibold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:bg-white rounded-t-lg transition">
+                3. Penjelasan & Sumber
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="max-w-6xl mx-auto p-4 mb-20">
+
+        <!-- TAB 1: INITIAL SURVEY -->
+        <div id="initial" class="tab-content active">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="section-title text-xl m-0">Skenario: Initial Survey (Sebelum Muat)</h2>
+                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">Target: Cari Constant</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Left Column: Drafts -->
+                    <div>
+                        <h3 class="font-bold text-slate-700 mb-3"><i class="fas fa-ruler-vertical mr-2"></i>Data Ukur Kapal (Draft)</h3>
+                        <div class="space-y-4">
+                            <div class="bg-slate-50 p-4 rounded border">
+                                <p class="text-sm font-bold text-center mb-2">PORT (Kiri)</p>
+                                <div class="grid grid-cols-3 gap-2 text-center">
+                                    <div><label class="text-xs">Fwd</label><div class="input-dummy p-2 rounded">3.45</div></div>
+                                    <div><label class="text-xs">Mid</label><div class="input-dummy p-2 rounded">4.10</div></div>
+                                    <div><label class="text-xs">Aft</label><div class="input-dummy p-2 rounded">4.85</div></div>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded border">
+                                <p class="text-sm font-bold text-center mb-2">STARBOARD (Kanan)</p>
+                                <div class="grid grid-cols-3 gap-2 text-center">
+                                    <div><label class="text-xs">Fwd</label><div class="input-dummy p-2 rounded">3.43</div></div>
+                                    <div><label class="text-xs">Mid</label><div class="input-dummy p-2 rounded">4.12</div></div>
+                                    <div><label class="text-xs">Aft</label><div class="input-dummy p-2 rounded">4.82</div></div>
+                                </div>
+                            </div>
+                            <div class="p-3 bg-yellow-50 border border-yellow-200 rounded text-sm">
+                                <span class="font-bold">Quarter Mean (Hitungan):</span> 4.1168 M
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Particulars & Deductibles -->
+                    <div>
+                        <h3 class="font-bold text-slate-700 mb-3"><i class="fas fa-tint mr-2"></i>Kondisi Cairan (Deductibles)</h3>
+                        <div class="bg-white border rounded overflow-hidden">
+                            <table class="min-w-full text-sm">
+                                <thead class="bg-slate-100">
+                                    <tr>
+                                        <th class="p-2 text-left">Jenis Cairan</th>
+                                        <th class="p-2 text-right">Berat (MT)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y">
+                                    <tr><td class="p-2">Fresh Water</td><td class="p-2 text-right input-dummy">150.00</td></tr>
+                                    <tr><td class="p-2 font-semibold text-blue-600">Ballast Water</td><td class="p-2 text-right input-dummy font-semibold text-blue-600">3,500.25</td></tr>
+                                    <tr><td class="p-2">Fuel Oil (MFO)</td><td class="p-2 text-right input-dummy">450.50</td></tr>
+                                    <tr><td class="p-2">Diesel Oil (MDO)</td><td class="p-2 text-right input-dummy">80.00</td></tr>
+                                    <tr><td class="p-2">Lube Oil</td><td class="p-2 text-right input-dummy">15.00</td></tr>
+                                    <tr><td class="p-2">Others</td><td class="p-2 text-right input-dummy">5.00</td></tr>
+                                    <tr class="bg-slate-50 font-bold"><td class="p-2">TOTAL PENGURANG</td><td class="p-2 text-right">4,200.75</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="mt-4 grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs font-bold block mb-1">Density (Air Laut)</label>
+                                <div class="input-dummy p-2 rounded w-full">1.020</div>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold block mb-1">Lightship (Berat Kosong)</label>
+                                <div class="input-dummy p-2 rounded w-full">5,200.50</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calculation Logic -->
+                <div class="mt-8 bg-slate-800 text-white p-4 rounded-lg">
+                    <h3 class="text-lg font-bold mb-2"><i class="fas fa-calculator mr-2"></i>Hasil Perhitungan Initial</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center text-sm">
+                        <div class="bg-slate-700 p-2 rounded">
+                            <span class="block text-slate-400 text-xs">Gross Disp (Tabel)</span>
+                            <span class="font-mono text-lg">10,295.36</span>
+                        </div>
+                        <div class="bg-slate-700 p-2 rounded">
+                            <span class="block text-slate-400 text-xs">Disp (Koreksi Density)</span>
+                            <span class="font-mono text-lg font-bold text-blue-300">10,245.12</span>
+                        </div>
+                        <div class="bg-slate-700 p-2 rounded relative">
+                            <span class="absolute -left-3 top-4 text-slate-500 hidden md:block">-</span>
+                            <span class="block text-slate-400 text-xs">Pengurang (LS + Ded)</span>
+                            <span class="font-mono text-lg text-red-300">9,401.25</span>
+                        </div>
+                        <div class="bg-green-600 p-2 rounded border-2 border-green-400 shadow-lg relative">
+                            <span class="absolute -left-3 top-4 text-white hidden md:block">=</span>
+                            <span class="block text-green-100 text-xs font-bold uppercase">Constant Kapal</span>
+                            <span class="font-mono text-xl font-bold">843.87 MT</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2 text-center italic">*Constant ini akan digunakan sebagai pengurang tetap di Final Survey.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: FINAL SURVEY -->
+        <div id="final" class="tab-content">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="section-title text-xl m-0">Skenario: Final Survey (Setelah Muat)</h2>
+                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">Target: Cari Berat Muatan</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Left Column: Drafts -->
+                    <div>
+                        <h3 class="font-bold text-slate-700 mb-3"><i class="fas fa-ruler-vertical mr-2"></i>Data Ukur Kapal (Draft)</h3>
+                        <div class="space-y-4">
+                            <div class="bg-slate-50 p-4 rounded border">
+                                <p class="text-sm font-bold text-center mb-2">PORT (Kiri)</p>
+                                <div class="grid grid-cols-3 gap-2 text-center">
+                                    <div><label class="text-xs">Fwd</label><div class="input-dummy p-2 rounded text-blue-800">9.20</div></div>
+                                    <div><label class="text-xs">Mid</label><div class="input-dummy p-2 rounded text-blue-800">9.45</div></div>
+                                    <div><label class="text-xs">Aft</label><div class="input-dummy p-2 rounded text-blue-800">9.65</div></div>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded border">
+                                <p class="text-sm font-bold text-center mb-2">STARBOARD (Kanan)</p>
+                                <div class="grid grid-cols-3 gap-2 text-center">
+                                    <div><label class="text-xs">Fwd</label><div class="input-dummy p-2 rounded text-blue-800">9.22</div></div>
+                                    <div><label class="text-xs">Mid</label><div class="input-dummy p-2 rounded text-blue-800">9.43</div></div>
+                                    <div><label class="text-xs">Aft</label><div class="input-dummy p-2 rounded text-blue-800">9.63</div></div>
+                                </div>
+                            </div>
+                             <div class="p-3 bg-yellow-50 border border-yellow-200 rounded text-sm">
+                                <span class="font-bold">Quarter Mean (Hitungan):</span> 9.436 M
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Particulars & Deductibles -->
+                    <div>
+                        <h3 class="font-bold text-slate-700 mb-3"><i class="fas fa-tint mr-2"></i>Kondisi Cairan (Deductibles)</h3>
+                        <div class="bg-white border rounded overflow-hidden">
+                            <table class="min-w-full text-sm">
+                                <thead class="bg-slate-100">
+                                    <tr>
+                                        <th class="p-2 text-left">Jenis Cairan</th>
+                                        <th class="p-2 text-right">Berat (MT)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y">
+                                    <tr><td class="p-2">Fresh Water</td><td class="p-2 text-right input-dummy">140.00</td></tr>
+                                    <tr><td class="p-2 font-semibold text-red-600">Ballast Water <span class="text-xs font-normal text-gray-500">(Dibuang)</span></td><td class="p-2 text-right input-dummy font-semibold text-red-600">100.00</td></tr>
+                                    <tr><td class="p-2">Fuel Oil (MFO)</td><td class="p-2 text-right input-dummy">445.00</td></tr>
+                                    <tr><td class="p-2">Diesel Oil (MDO)</td><td class="p-2 text-right input-dummy">75.00</td></tr>
+                                    <tr><td class="p-2">Lube Oil</td><td class="p-2 text-right input-dummy">15.00</td></tr>
+                                    <tr><td class="p-2">Others</td><td class="p-2 text-right input-dummy">5.00</td></tr>
+                                    <tr class="bg-slate-50 font-bold"><td class="p-2">TOTAL PENGURANG</td><td class="p-2 text-right">780.00</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                         <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
+                            <p class="text-xs text-blue-800">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Perhatikan penurunan drastis <strong>Ballast Water</strong> dari 3500 MT (Initial) menjadi 100 MT (Final). Air dibuang untuk memberi ruang muatan.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calculation Logic -->
+                <div class="mt-8 bg-slate-800 text-white p-4 rounded-lg">
+                    <h3 class="text-lg font-bold mb-2"><i class="fas fa-calculator mr-2"></i>Hasil Perhitungan Akhir (Final)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 text-center text-sm items-center">
+                        <div class="bg-slate-700 p-2 rounded w-full">
+                            <span class="block text-slate-400 text-xs">Disp (Koreksi Density)</span>
+                            <span class="font-mono text-lg font-bold">34,492.91</span>
+                        </div>
+                        <div class="text-slate-400 font-bold hidden md:block">-</div>
+                        <div class="bg-slate-700 p-2 rounded w-full">
+                            <span class="block text-slate-400 text-xs">Lightship + Ded</span>
+                            <span class="font-mono text-lg text-red-300">5,980.50</span>
+                        </div>
+                        <div class="bg-slate-700 p-2 rounded w-full relative">
+                             <span class="absolute -left-3 top-4 text-slate-500 hidden md:block">-</span>
+                            <span class="block text-slate-400 text-xs">Constant (Dari Initial)</span>
+                            <span class="font-mono text-lg text-yellow-300">843.87</span>
+                        </div>
+                        <div class="bg-green-600 p-3 rounded border-2 border-green-400 shadow-lg w-full relative">
+                             <span class="absolute -left-4 top-4 text-white hidden md:block">=</span>
+                            <span class="block text-green-100 text-xs font-bold uppercase">Net Cargo (Muatan)</span>
+                            <span class="font-mono text-xl font-bold">27,668.54</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: GUIDE & SOURCES -->
+        <div id="guide" class="tab-content">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                <h2 class="section-title text-xl">Penjelasan & Sumber Data</h2>
+                <p class="mb-4 text-slate-600">Berikut adalah panduan lengkap darimana setiap angka dalam form aplikasi didapatkan.</p>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm text-left text-slate-600 border rounded-lg">
+                        <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 border-b">Nama Kolom (Input)</th>
+                                <th scope="col" class="px-6 py-3 border-b">Penjelasan</th>
+                                <th scope="col" class="px-6 py-3 border-b">Cara Mendapatkan Data (Sumber)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <!-- Group 1 -->
+                            <tr class="bg-white">
+                                <td class="px-6 py-4 font-bold text-slate-800">Draft Mark (Fwd, Mid, Aft)</td>
+                                <td class="px-6 py-4">Angka kedalaman kapal yang tercetak di lambung (Depan, Tengah, Belakang).</td>
+                                <td class="px-6 py-4"><i class="fas fa-binoculars mr-1 text-blue-500"></i> <strong>Visual:</strong> Lihat langsung ke lambung kapal menggunakan boat atau tangga gantung.</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="px-6 py-4 font-bold text-slate-800">Density (Berat Jenis)</td>
+                                <td class="px-6 py-4">Kepadatan air di tempat kapal sandar. Mempengaruhi daya apung.</td>
+                                <td class="px-6 py-4"><i class="fas fa-flask mr-1 text-purple-500"></i> <strong>Hydrometer:</strong> Ambil sampel air laut di sekitar kapal, ukur dengan alat Hydrometer.</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="px-6 py-4 font-bold text-slate-800">Lightship</td>
+                                <td class="px-6 py-4">Berat kapal kosong (hanya besi/konstruksi) tanpa muatan/BBM.</td>
+                                <td class="px-6 py-4"><i class="fas fa-book mr-1 text-orange-500"></i> <strong>Dokumen:</strong> Lihat buku "Stability Booklet" atau "Capacity Plan" milik kapal. Nilainya tetap.</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="px-6 py-4 font-bold text-slate-800">LBP (Length Btw Perpendiculars)</td>
+                                <td class="px-6 py-4">Panjang garis air kapal antara garis tegak depan dan belakang.</td>
+                                <td class="px-6 py-4"><i class="fas fa-file-alt mr-1 text-orange-500"></i> <strong>Ship Particulars:</strong> Dokumen spesifikasi umum kapal.</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="px-6 py-4 font-bold text-slate-800">Ballast & Fresh Water</td>
+                                <td class="px-6 py-4">Air yang dibawa untuk keseimbangan (Ballast) dan kebutuhan kru (Fresh).</td>
+                                <td class="px-6 py-4"><i class="fas fa-ruler mr-1 text-green-500"></i> <strong>Sounding:</strong> Ukur kedalaman tangki pakai meteran bandul, lalu cocokkan dengan "Tank Sounding Table".</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="px-6 py-4 font-bold text-slate-800">Hydrostatic Table (MTC, TPC, LCF)</td>
+                                <td class="px-6 py-4">Data teknis stabilitas kapal pada draft tertentu.</td>
+                                <td class="px-6 py-4"><i class="fas fa-table mr-1 text-blue-800"></i> <strong>Buku Tabel Kapal:</strong> Cari halaman tabel hidrostatik sesuai draft rata-rata saat itu.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <h4 class="font-bold text-yellow-800 mb-2">Tips Validasi Petugas:</h4>
+                    <ul class="list-disc pl-5 text-sm text-yellow-800 space-y-1">
+                        <li>Pastikan Sounding air ballast dilakukan dengan benar (bukan hanya percaya laporan kru).</li>
+                        <li>Cek Densitas air sendiri, jangan pakai angka standar 1.025 jika di sungai/muara.</li>
+                        <li>Perhatikan "Constant" kapal. Jika angkanya negatif atau terlalu besar (misal >1000 MT untuk kapal kecil), curigai adanya kesalahan hitung atau muatan tersembunyi.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script for Tabs -->
+    <script>
+        function switchTab(tabName) {
+            // Hide all contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            // Show selected content
+            document.getElementById(tabName).classList.add('active');
+
+            // Reset buttons styling
+            const buttons = ['btn-initial', 'btn-final', 'btn-guide'];
+            buttons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                btn.classList.remove('text-blue-600', 'border-blue-600', 'bg-white');
+                btn.classList.add('text-slate-500', 'border-transparent');
+                
+                // Active state logic
+                if (btnId === 'btn-' + tabName) {
+                    btn.classList.remove('text-slate-500', 'border-transparent');
+                    btn.classList.add('text-blue-600', 'border-blue-600', 'bg-white');
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
