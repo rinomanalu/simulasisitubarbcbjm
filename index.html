@@ -743,13 +743,13 @@
         }
 
         // --- GEMINI AI CHATBOT LOGIC ---
-        const apiKey = "AIzaSyAlBh48kTBAKorscWeDrE78c_4wEyiKeNQ"; // Updated Gemini API Key
+        const apiKey = "AIzaSyBFwxm5V-1b9G-8Y4oY1WLIQ7i0jVHr5OQ"; // Updated Gemini API Key
 
         async function getAIResponse(input) {
             // 1. Coba Panggil API Gemini (Jika Key Tersedia)
             if (apiKey) {
                 try {
-                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
                     
                     const systemInstruction = `
                     Anda adalah asisten ahli untuk aplikasi 'Situbar' (Sistem Hitung Barang) yang digunakan oleh Surveyor dan Bea Cukai untuk Draught Survey kapal.
