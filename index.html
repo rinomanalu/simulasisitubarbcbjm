@@ -67,11 +67,17 @@
             <div class="space-y-4 text-left">
                 <div>
                     <label class="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wider">Username</label>
-                    <input type="text" id="login-user" class="w-full border border-slate-300 rounded-lg px-4 py-3 text-slate-700 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-slate-50" placeholder="Masukkan username">
+                    <div class="tooltip-wrap">
+                        <span class="tooltip-content">isikan nama instansi kita</span>
+                        <input type="text" id="login-user" class="w-full border border-slate-300 rounded-lg px-4 py-3 text-slate-700 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-slate-50" placeholder="Masukkan username">
+                    </div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wider">Password</label>
-                    <input type="password" id="login-pass" class="w-full border border-slate-300 rounded-lg px-4 py-3 text-slate-700 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-slate-50" placeholder="Masukkan password" onkeypress="if(event.key==='Enter') doLogin()">
+                    <div class="tooltip-wrap">
+                        <span class="tooltip-content">isikan kota penempatan kita</span>
+                        <input type="password" id="login-pass" class="w-full border border-slate-300 rounded-lg px-4 py-3 text-slate-700 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-slate-50" placeholder="Masukkan password" onkeypress="if(event.key==='Enter') doLogin()">
+                    </div>
                 </div>
                 <div id="login-error" class="hidden bg-red-50 text-red-600 text-xs font-bold p-3 rounded-lg flex items-center gap-2 border border-red-100 animate-pulse">
                     <i class="fas fa-exclamation-circle"></i> Username atau Password salah!
