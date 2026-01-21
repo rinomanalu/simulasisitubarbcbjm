@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <!-- Viewport settings optimized for mobile (Android/iOS) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Panduan & Generator Data Draught Survey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; -webkit-font-smoothing: antialiased; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Styling untuk Input yang bisa diedit */
+        input.input-dummy {
+            background-color: #ffffff;
+            border: 1px solid #d1d5db;
+            color: #1f2937;
+            font-family: monospace;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            width: 100%;
+            text-align: center;
+            /* Mobile touch target optimization */
+            min-height: 44px;
+            border-radius: 0.375rem; /* rounded-md */
+        }
+        
+        /* Compact view for Desktop */
+        @media (min-width: 768px) {
+            input.input-dummy {
+                min-height: auto;
+                padding-top: 0.25rem;
+                padding-bottom: 0.25rem;
+            }
+        }
+
+        input.input-dummy:focus {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+        /* Highlight saat digenerate */
+        input.input-dummy.updated {
+            background-color: #dbeafe;
+            border-color: #3b82f6;
+        }
+        
+        /* Select styling */
+        select.input-dummy {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-appearance: none;
+            appearance: none;
+            min-height: 44px; /* Mobile touch friendly */
+        }
+        @media (min-width: 768px) {
+            select.input-dummy {
+                min-height: auto;
+            }
+        }
+
+        .section-title {
+            border-left: 4px solid #2563eb;
+            padding-left: 10px;
+            color: #1e3a8a;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .situbar-badge {
+            display: inline-block;
+            background-color: #e0f2fe;
+            color: #0369a1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-top: 4px;
+            border: 1px solid #bae6fd;
+        }
+        /* Hapus spinner di input number */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        /* Chat Widget Animation */
+        #chat-window {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease-in-out;
+        }
+        /* Markdown style for chat */
+        .prose p { margin-bottom: 0.5em; }
+        .prose ul { list-style-type: disc; padding-left: 1.2em; }
+
+        /* --- TOOLTIP STYLES (NEW) --- */
+        .tooltip-wrap {
+            position: relative;
+            width: 100%;
+        }
+        .tooltip-content {
+            visibility: hidden;
+            width: 150px;
+            background-color: #1e293b; /* slate-800 */
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 6px 8px;
+            position: absolute;
+            z-index: 50;
+            bottom: 115%; /* Position above input */
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.2s;
+            font-size: 0.7rem;
+            font-weight: normal;
+            pointer-events: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            line-height: 1.2;
+            border: 1px solid #475569;
+        }
+        .tooltip-content::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #1e293b transparent transparent transparent;
+        }
+        /* Show tooltip on hover or when input inside is focused */
+        .tooltip-wrap:hover .tooltip-content,
+        .tooltip-wrap:focus-within .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="text-slate-800 relative min-h-screen pb-32">
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white p-4 md:p-6 shadow-lg sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-center md:text-left w-full md:w-auto">
+                <h1 class="text-lg md:text-2xl font-bold flex items-center justify-center md:justify-start gap-2">
+                    <i class="fas fa-ship text-yellow-400"></i> Panduan Draught Survey Curah Padat
+                </h1>
+                <p class="text-slate-400 text-xs md:text-sm mt-1">Simulasi Generator Data (Situbar) Curah Padat</p>
+            </div>
+            <div class="flex gap-3 w-full md:w-auto justify-center">
+                <button onclick="generateAllData()" class="bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-bold py-2.5 px-5 rounded-lg shadow-md transition transform active:scale-95 md:hover:scale-105 text-sm md:text-base w-full md:w-auto flex items-center justify-center gap-2">
+                    <i class="fas fa-magic"></i> Generate Data
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="max-w-6xl mx-auto mt-4 px-2 md:px-4 sticky top-[80px] z-30 bg-[#f3f4f6] pt-2">
+        <div class="flex flex-row gap-1 md:gap-2 border-b border-slate-300">
+            <button onclick="switchTab('initial')" id="btn-initial" class="flex-1 py-3 text-sm md:text-base font-semibold text-blue-600 border-b-2 border-blue-600 bg-white rounded-t-lg transition hover:bg-blue-50 focus:outline-none">
+                1. Initial
+            </button>
+            <button onclick="switchTab('final')" id="btn-final" class="flex-1 py-3 text-sm md:text-base font-semibold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:bg-white rounded-t-lg transition focus:outline-none">
+                2. Final
+            </button>
+            <button onclick="switchTab('guide')" id="btn-guide" class="flex-1 py-3 text-sm md:text-base font-semibold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:bg-white rounded-t-lg transition focus:outline-none">
+                3. Panduan
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="max-w-6xl mx-auto p-2 md:p-4">
+
+        <!-- TAB 1: INITIAL SURVEY -->
+        <div id="initial" class="tab-content active">
+            <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm border border-slate-200">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-3">
+                    <h2 class="section-title text-lg md:text-xl m-0 w-full md:w-auto">Skenario: Initial (Kosong)</h2>
+                    <div class="w-full md:w-auto bg-slate-50 p-2 rounded border border-slate-100 flex items-center justify-between md:block">
+                        <span class="text-xs text-slate-500 md:block mr-2">Nama Kapal:</span>
+                        <input type="text" id="ship-name" class="font-bold text-slate-800 bg-transparent border-none text-right focus:ring-0 w-40 md:w-48 text-sm md:text-base p-0" value="MV. DUMMY SHIP">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+                    <!-- Left Column: Drafts & Tech Data -->
+                    <div>
+                        <h3 class="font-bold text-slate-700 mb-3 text-sm md:text-base flex items-center gap-2"><i class="fas fa-ruler-vertical text-blue-500"></i>Data Ukur Kapal (Draft)</h3>
+                        <p class="text-xs text-slate-500 mb-2 italic">*Silahkan edit angka di bawah ini.</p>
+                        <div class="space-y-4">
+                            <!-- Mobile Note: text-base prevents iOS zoom on focus -->
+                            <div class="bg-slate-50 p-3 md:p-4 rounded border">
+                                <p class="text-xs md:text-sm font-bold text-center mb-2 text-slate-600">PORT (Kiri)</p>
+                                <div class="grid grid-cols-3 gap-2 text-center">
+                                    <div>
+                                        <label class="text-[10px] md:text-xs text-slate-500 mb-1 block">Fwd</label>
+                                        <div class="tooltip-wrap">
+                                            <span class="tooltip-content">Lihat angka draft di Haluan Kiri kapal</span>
+                                            <input type="number" step="0.01" id="i-fp" oninput="recalculate('initial')" class="input-dummy text-base md:text-sm">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] md:text-xs text-slate-500 mb-1 block">Mid</label>
+                                        <div class="tooltip-wrap">
+                                            <span class="tooltip-content">Lihat angka draft di Tengah Kiri kapal</span>
+                                            <input type="number" step="0.01" id="i-mp" oninput="recalculate('initial')" class="input-dummy text-base md:text-sm">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] md:text-xs text-slate-500 mb-1 block">Aft</label>
+                                        <div class="tooltip-wrap">
+                                            <span class="tooltip-content">Lihat angka draft di Buritan Kiri kapal</span>
+                                            <input type="number" step="0.01" id="i-ap" oninput="recalculate('initial')" class="input-dummy text-base md:text-sm">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 p-3 md:p-4 rounded border">
+                                <p class="text-xs md:text-sm font-bold text-center mb-2 text-slate-600">STARBOARD (Kanan)</p>
+                                <div class="grid grid-cols-3 gap-2 text-center">
+                                    <div>
+                                        <label class="text-[10px] md:text-xs text-slate-500 mb-1 block">Fwd</label>
+                                        <div class="tooltip-wrap">
+                                            <span class="tooltip-content">Lihat angka draft di Haluan Kanan kapal</span>
+                                            <input type="number" step="0.01" id="i-fs" oninput="recalculate('initial')" class="input-dummy text-base md:text-sm">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] md:text-xs text-slate-500 mb-1 block">Mid</label>
+                                        <div class="tooltip-wrap">
+                                            <span class="tooltip-content">Lihat angka draft di Tengah Kanan kapal</span>
+                                            <input type="number" step="0.01" id="i-ms" oninput="recalculate('initial')" class="input-dummy text-base md:text-sm">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] md:text-xs text-slate-500 mb-1 block">Aft</label>
+                                        <div class="tooltip-wrap">
+                                            <span class="tooltip-content">Lihat angka draft di Buritan Kanan kapal</span>
+                                            <input type="number" step="0.01" id="i-as" oninput="recalculate('initial')" class="input-dummy text-base md:text-sm">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 bg-yellow-50 border border-yellow-200 rounded text-sm flex justify-between items-center shadow-sm">
+                                <span class="font-bold text-yellow-800">Quarter Mean (QM):</span> 
+                                <span id="i-qm" class="text-blue-700 font-mono text-lg font-bold">0.0000</span>
+                            </div>
+                        </div>
+
+                        <!-- Technical Corrections Block -->
+                        <div class="mt-6 bg-slate-50 p-3 md:p-4 rounded border">
+                            <h3 class="font-bold text-slate-700 mb-3 text-sm md:text-base flex items-center gap-2"><i class="fas fa-cog text-gray-500"></i>Data Kapal & Posisi Marka</h3>
+                            <div class="grid grid-cols-2 gap-3 mb-3">
+                                <div>
+                                    <label class="text-[10px] md:text-xs font-bold block mb-1 text-slate-600">LBP (m)</label>
+                                    <div class="tooltip-wrap">
+                                        <span class="tooltip-content">Lihat 'Ship Particulars' atau 'GA Plan'</span>
+                                        <input type="number" step="0.01" id="i-lbp" oninput="recalculate('initial')" class="input-dummy text-base md:text-sm">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] md:text-xs font-bold block mb-1 text-slate-600">Plimsoll Mark Position</label>
+                                    <div class="tooltip-wrap">
+                                        <span class="tooltip-content">Posisi marka tengah terhadap Midship (lihat GA Plan)</span>
+                                        <select id="i-plimsoll" onchange="recalculate('initial')" class="input-dummy w-full text-xs md:text-sm">
+                                            <option value="behind">Midle Behind Midship</option>
+                                            <option value="front">Midle Front Midship</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-center">
+                                <div>
+                                    <label class="text-[10px] md:text-xs font-bold text-slate-600 mb-1 block">dF (m)</label>
+                                    <div class="tooltip-wrap">
+                                        <span class="tooltip-content">Jarak draft mark depan ke Garis Tegak Depan (FP)</span>
+                                        <input type="number" step="0.01" id="i-df" oninput="recalculate('initial')" class="input-dummy text-base md:text-sm">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] md:text-xs font-bold text-slate-600 mb-1 block">dM (m)</label>
+                                    <div class="tooltip-wrap">
+                                        <span class="tooltip-content">Jarak draft mark tengah ke Midship</span>
+                                        <input type="number" step="0.01" id="i-dm" oninput="recalculate('initial')" class="input-dummy text-base md:text-sm">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] md:text-xs font-bold text-slate-600 mb-1 block">dA (m)</label>
+                                    <div class="tooltip-wrap">
+                                        <span class="tooltip-content">Jarak draft mark belakang ke Garis Tegak Belakang (AP)</span>
+                                        <input type="number" step="0.01" id="i-da" oninput="recalculate('initial')" class="input-dummy text-base md:text-sm">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Particulars, Deductibles & HYDRO TABLE -->
+                    <div>
+                        <h3 class="font-bold text-slate-700 mb-3 text-sm md:text-base flex items-center gap-2"><i class="fas fa-tint text-blue-400"></i>Kondisi Cairan (Deductibles)</h3>
+                        <div class="bg-white border rounded overflow-x-auto mb-6 shadow-sm">
+                            <table class="min-w-full text-xs md:text-sm">
+                                <thead class="bg-slate-100">
+                                    <tr>
+                                        <th class="p-2 text-left font-semibold text-slate-600">Jenis Cairan</th>
+                                        <th class="p-2 text-right font-semibold text-slate-600">Berat (MT)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y">
+                                    <tr><td class="p-2 whitespace-nowrap">Fresh Water</td><td class="p-0">
+                                        <div class="tooltip-wrap"><span class="tooltip-content">Hasil sounding tangki Air Tawar</span><input type="number" step="0.01" id="i-fw" oninput="recalculate('initial')" class="input-dummy p-2 text-right border-none focus:ring-1 text-base md:text-sm"></div>
+                                    </td></tr>
+                                    <tr><td class="p-2 whitespace-nowrap">Ballast Water</td><td class="p-0">
+                                        <div class="tooltip-wrap"><span class="tooltip-content">Hasil sounding tangki Ballast</span><input type="number" step="0.01" id="i-bw" oninput="recalculate('initial')" class="input-dummy p-2 text-right border-none focus:ring-1 text-blue-600 font-bold text-base md:text-sm"></div>
+                                    </td></tr>
+                                    <tr><td class="p-2 whitespace-nowrap">Fuel Oil</td><td class="p-0">
+                                        <div class="tooltip-wrap"><span class="tooltip-content">Hasil sounding tangki FO/MFO</span><input type="number" step="0.01" id="i-fo" oninput="recalculate('initial')" class="input-dummy p-2 text-right border-none focus:ring-1 text-base md:text-sm"></div>
+                                    </td></tr>
+                                    <tr><td class="p-2 whitespace-nowrap">Diesel Oil</td><td class="p-0">
+                                        <div class="tooltip-wrap"><span class="tooltip-content">Hasil sounding tangki DO/MDO</span><input type="number" step="0.01" id="i-do" oninput="recalculate('initial')" class="input-dummy p-2 text-right border-none focus:ring-1 text-base md:text-sm"></div>
+                                    </td></tr>
+                                    <tr><td class="p-2 whitespace-nowrap">Lube Oil</td><td class="p-0">
+                                        <div class="tooltip-wrap"><span class="tooltip-content">Stok Lube Oil di tanki</span><input type="number" step="0.01" id="i-lo" oninput="recalculate('initial')" class="input-dummy p-2 text-right border-none focus:ring-1 text-base md:text-sm"></div>
+                                    </td></tr>
+                                    <tr class="bg-slate-100 font-bold"><td class="p-2 text-slate-700">TOTAL PENGURANG</td><td id="i-tot-ded" class="p-2 text-right text-base md:text-sm font-mono">0.00</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <label class="text-[10px] md:text-xs font-bold block mb-1 text-slate-600">Density (Air Laut)</label>
+                                <div class="tooltip-wrap">
+                                    <span class="tooltip-content">Ukur sampel air di sekitar kapal dengan Hydrometer</span>
+                                    <input type="number" step="0.001" id="i-density" oninput="recalculate('initial')" class="input-dummy text-base md:text-sm">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-[10px] md:text-xs font-bold block mb-1 text-slate-600">Lightship (MT)</label>
+                                <div class="tooltip-wrap">
+                                    <span class="tooltip-content">Lihat 'Stability Booklet' (Berat Kapal Kosong)</span>
+                                    <input type="number" step="0.01" id="i-lightship" oninput="recalculate('initial')" class="input-dummy text-base md:text-sm">
+                                </div>
+                            </div>
+                        </div>
+
+                         <!-- HYDROSTATIC TABLE SECTION -->
+                         <div class="bg-blue-50 p-3 md:p-4 rounded border border-blue-200">
+                            <h3 class="font-bold text-blue-800 mb-3 text-sm border-b border-blue-200 pb-2 flex items-center gap-2"><i class="fas fa-table"></i>Tabel Hydrostatic (Interpolasi)</h3>
+                            
+                            <!-- Quarter Drafts -->
+                            <div class="grid grid-cols-2 gap-4 mb-3">
+                                <div>
+                                    <label class="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Q1 (Bawah)</label>
+                                    <div class="tooltip-wrap">
+                                        <span class="tooltip-content">Cari draft di Buku Hydrostatic yang mendekati QM (Bawah)</span>
+                                        <input type="number" step="0.01" id="i-q1" oninput="recalculate('initial')" class="input-dummy text-center text-base md:text-sm font-bold text-blue-800">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Q2 (Atas)</label>
+                                    <div class="tooltip-wrap">
+                                        <span class="tooltip-content">Cari draft di Buku Hydrostatic yang mendekati QM (Atas)</span>
+                                        <input type="number" step="0.01" id="i-q2" oninput="recalculate('initial')" class="input-dummy text-center text-base md:text-sm font-bold text-blue-800">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Values -->
+                            <div class="space-y-2 text-xs md:text-sm">
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <div class="font-bold text-[10px] md:text-xs text-slate-600">Displacement</div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai Disp untuk Q1</span><input type="number" step="0.01" id="i-disp1" oninput="recalculate('initial')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai Disp untuk Q2</span><input type="number" step="0.01" id="i-disp2" oninput="recalculate('initial')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <div class="font-bold text-[10px] md:text-xs text-slate-600">LCF</div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai LCF untuk Q1</span><input type="number" step="0.01" id="i-lcf1" oninput="recalculate('initial')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai LCF untuk Q2</span><input type="number" step="0.01" id="i-lcf2" oninput="recalculate('initial')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <div class="font-bold text-[10px] md:text-xs text-slate-600">TPC</div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai TPC untuk Q1</span><input type="number" step="0.01" id="i-tpc1" oninput="recalculate('initial')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai TPC untuk Q2</span><input type="number" step="0.01" id="i-tpc2" oninput="recalculate('initial')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <div class="font-bold text-[10px] md:text-xs text-slate-600">MTC 1</div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai MTC untuk Q1</span><input type="number" step="0.01" id="i-mtc1-1" oninput="recalculate('initial')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai MTC untuk Q2 (Bagian 1 jika dipisah)</span><input type="number" step="0.01" id="i-mtc1-2" oninput="recalculate('initial')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <div class="font-bold text-[10px] md:text-xs text-slate-600">MTC 2</div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai MTC untuk Q2</span><input type="number" step="0.01" id="i-mtc2-1" oninput="recalculate('initial')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai MTC untuk Q2 (Bagian 2)</span><input type="number" step="0.01" id="i-mtc2-2" oninput="recalculate('initial')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Calculation Logic -->
+                <div class="mt-8 bg-slate-800 text-white p-4 rounded-lg shadow-lg">
+                    <h3 class="text-base md:text-lg font-bold mb-3 flex items-center gap-2"><i class="fas fa-calculator text-yellow-400"></i>Hasil Perhitungan Initial</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center text-sm">
+                        <div class="bg-slate-700 p-2 rounded">
+                            <span class="block text-slate-400 text-xs mb-1">Gross Disp (Interpolasi)</span>
+                            <span id="i-disp-gross" class="font-mono text-base md:text-lg">0.00</span>
+                        </div>
+                        <div class="bg-slate-700 p-2 rounded">
+                            <span class="block text-slate-400 text-xs mb-1">Disp (Koreksi Density)</span>
+                            <span id="i-disp-net" class="font-mono text-base md:text-lg font-bold text-blue-300">0.00</span>
+                        </div>
+                        <div class="bg-slate-700 p-2 rounded relative">
+                            <span class="absolute -left-3 top-4 text-slate-500 hidden md:block">-</span>
+                            <span class="block text-slate-400 text-xs mb-1">Pengurang (LS + Ded)</span>
+                            <span id="i-deduct-total" class="font-mono text-base md:text-lg text-red-300">0.00</span>
+                        </div>
+                        <div class="bg-green-600 p-2 rounded border-2 border-green-400 shadow-lg relative mt-2 md:mt-0">
+                            <span class="absolute -left-3 top-4 text-white hidden md:block">=</span>
+                            <span class="block text-green-100 text-xs font-bold uppercase mb-1">Constant Kapal</span>
+                            <span id="constant" class="font-mono text-lg md:text-xl font-bold">0.00 MT</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: FINAL SURVEY -->
+        <div id="final" class="tab-content">
+            <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm border border-slate-200">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-2">
+                    <h2 class="section-title text-lg md:text-xl m-0 w-full md:w-auto">Skenario: Final (Setelah Muat)</h2>
+                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded w-full md:w-auto text-center border border-green-200">Target: Cari Berat Muatan</span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+                    <!-- Left Column: Drafts -->
+                    <div>
+                        <h3 class="font-bold text-slate-700 mb-3 text-sm md:text-base flex items-center gap-2"><i class="fas fa-ruler-vertical text-blue-500"></i>Data Ukur Kapal (Draft)</h3>
+                        <p class="text-xs text-slate-500 mb-2 italic">*Silahkan edit angka di bawah ini.</p>
+                        <div class="space-y-4">
+                            <div class="bg-slate-50 p-3 md:p-4 rounded border">
+                                <p class="text-xs md:text-sm font-bold text-center mb-2 text-slate-600">PORT (Kiri)</p>
+                                <div class="grid grid-cols-3 gap-2 text-center">
+                                    <div>
+                                        <label class="text-[10px] md:text-xs text-slate-500 mb-1 block">Fwd</label>
+                                        <div class="tooltip-wrap"><span class="tooltip-content">Lihat angka draft di Haluan Kiri</span><input type="number" step="0.01" id="f-fp" oninput="recalculate('final')" class="input-dummy text-base md:text-sm"></div>
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] md:text-xs text-slate-500 mb-1 block">Mid</label>
+                                        <div class="tooltip-wrap"><span class="tooltip-content">Lihat angka draft di Tengah Kiri</span><input type="number" step="0.01" id="f-mp" oninput="recalculate('final')" class="input-dummy text-base md:text-sm"></div>
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] md:text-xs text-slate-500 mb-1 block">Aft</label>
+                                        <div class="tooltip-wrap"><span class="tooltip-content">Lihat angka draft di Buritan Kiri</span><input type="number" step="0.01" id="f-ap" oninput="recalculate('final')" class="input-dummy text-base md:text-sm"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 p-3 md:p-4 rounded border">
+                                <p class="text-xs md:text-sm font-bold text-center mb-2 text-slate-600">STARBOARD (Kanan)</p>
+                                <div class="grid grid-cols-3 gap-2 text-center">
+                                    <div>
+                                        <label class="text-[10px] md:text-xs text-slate-500 mb-1 block">Fwd</label>
+                                        <div class="tooltip-wrap"><span class="tooltip-content">Lihat angka draft di Haluan Kanan</span><input type="number" step="0.01" id="f-fs" oninput="recalculate('final')" class="input-dummy text-base md:text-sm"></div>
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] md:text-xs text-slate-500 mb-1 block">Mid</label>
+                                        <div class="tooltip-wrap"><span class="tooltip-content">Lihat angka draft di Tengah Kanan</span><input type="number" step="0.01" id="f-ms" oninput="recalculate('final')" class="input-dummy text-base md:text-sm"></div>
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] md:text-xs text-slate-500 mb-1 block">Aft</label>
+                                        <div class="tooltip-wrap"><span class="tooltip-content">Lihat angka draft di Buritan Kanan</span><input type="number" step="0.01" id="f-as" oninput="recalculate('final')" class="input-dummy text-base md:text-sm"></div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="p-3 bg-yellow-50 border border-yellow-200 rounded text-sm flex justify-between items-center shadow-sm">
+                                <span class="font-bold text-yellow-800">Quarter Mean (QM):</span> 
+                                <span id="f-qm" class="text-blue-700 font-mono text-lg font-bold">0.0000</span>
+                            </div>
+                        </div>
+
+                         <!-- Technical Corrections Block -->
+                         <div class="mt-6 bg-slate-50 p-3 md:p-4 rounded border">
+                            <h3 class="font-bold text-slate-700 mb-3 text-sm md:text-base flex items-center gap-2"><i class="fas fa-cog text-gray-500"></i>Data Kapal & Posisi Marka</h3>
+                            <div class="grid grid-cols-2 gap-3 mb-3">
+                                <div>
+                                    <label class="text-[10px] md:text-xs font-bold block mb-1 text-slate-600">LBP (m)</label>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Lihat 'Ship Particulars' atau 'GA Plan'</span><input type="number" step="0.01" id="f-lbp" oninput="recalculate('final')" class="input-dummy text-base md:text-sm"></div>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] md:text-xs font-bold block mb-1 text-slate-600">Plimsoll Mark Position</label>
+                                    <div class="tooltip-wrap">
+                                        <span class="tooltip-content">Posisi marka tengah terhadap Midship (lihat GA Plan)</span>
+                                        <select id="f-plimsoll" onchange="recalculate('final')" class="input-dummy w-full text-xs md:text-sm">
+                                            <option value="behind">Midle Behind Midship</option>
+                                            <option value="front">Midle Front Midship</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-center">
+                                <div>
+                                    <label class="text-[10px] md:text-xs font-bold text-slate-600 mb-1 block">dF (m)</label>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Jarak draft mark depan ke Garis Tegak Depan (FP)</span><input type="number" step="0.01" id="f-df" oninput="recalculate('final')" class="input-dummy text-base md:text-sm"></div>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] md:text-xs font-bold text-slate-600 mb-1 block">dM (m)</label>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Jarak draft mark tengah ke Midship</span><input type="number" step="0.01" id="f-dm" oninput="recalculate('final')" class="input-dummy text-base md:text-sm"></div>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] md:text-xs font-bold text-slate-600 mb-1 block">dA (m)</label>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Jarak draft mark belakang ke Garis Tegak Belakang (AP)</span><input type="number" step="0.01" id="f-da" oninput="recalculate('final')" class="input-dummy text-base md:text-sm"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Particulars, Deductibles & HYDRO TABLE -->
+                    <div>
+                        <h3 class="font-bold text-slate-700 mb-3 text-sm md:text-base flex items-center gap-2"><i class="fas fa-tint text-blue-400"></i>Kondisi Cairan (Deductibles)</h3>
+                        <div class="bg-white border rounded overflow-x-auto mb-6 shadow-sm">
+                            <table class="min-w-full text-xs md:text-sm">
+                                <thead class="bg-slate-100">
+                                    <tr>
+                                        <th class="p-2 text-left font-semibold text-slate-600">Jenis Cairan</th>
+                                        <th class="p-2 text-right font-semibold text-slate-600">Berat (MT)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y">
+                                    <tr><td class="p-2 whitespace-nowrap">Fresh Water</td><td class="p-0">
+                                        <div class="tooltip-wrap"><span class="tooltip-content">Sounding tangki Air Tawar</span><input type="number" step="0.01" id="f-fw" oninput="recalculate('final')" class="input-dummy p-2 text-right border-none focus:ring-1 text-base md:text-sm"></div>
+                                    </td></tr>
+                                    <tr><td class="p-2 whitespace-nowrap">Ballast Water</td><td class="p-0">
+                                        <div class="tooltip-wrap"><span class="tooltip-content">Sounding tangki Ballast</span><input type="number" step="0.01" id="f-bw" oninput="recalculate('final')" class="input-dummy p-2 text-right border-none focus:ring-1 text-red-600 font-bold text-base md:text-sm"></div>
+                                    </td></tr>
+                                    <tr><td class="p-2 whitespace-nowrap">Fuel Oil</td><td class="p-0">
+                                        <div class="tooltip-wrap"><span class="tooltip-content">Sounding tangki FO</span><input type="number" step="0.01" id="f-fo" oninput="recalculate('final')" class="input-dummy p-2 text-right border-none focus:ring-1 text-base md:text-sm"></div>
+                                    </td></tr>
+                                    <tr><td class="p-2 whitespace-nowrap">Diesel Oil</td><td class="p-0">
+                                        <div class="tooltip-wrap"><span class="tooltip-content">Sounding tangki DO</span><input type="number" step="0.01" id="f-do" oninput="recalculate('final')" class="input-dummy p-2 text-right border-none focus:ring-1 text-base md:text-sm"></div>
+                                    </td></tr>
+                                    <tr><td class="p-2 whitespace-nowrap">Lube Oil</td><td class="p-0">
+                                        <div class="tooltip-wrap"><span class="tooltip-content">Stok Lube Oil</span><input type="number" step="0.01" id="f-lo" oninput="recalculate('final')" class="input-dummy p-2 text-right border-none focus:ring-1 text-base md:text-sm"></div>
+                                    </td></tr>
+                                    <tr class="bg-slate-100 font-bold"><td class="p-2 text-slate-700">TOTAL PENGURANG</td><td id="f-tot-ded" class="p-2 text-right text-base md:text-sm font-mono">0.00</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                         <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <label class="text-[10px] md:text-xs font-bold block mb-1 text-slate-600">Density (Air Laut)</label>
+                                <div class="tooltip-wrap"><span class="tooltip-content">Ukur sampel air dengan Hydrometer</span><input type="number" step="0.001" id="f-density" oninput="recalculate('final')" class="input-dummy text-base md:text-sm"></div>
+                            </div>
+                            <div>
+                                <label class="text-[10px] md:text-xs font-bold block mb-1 text-slate-600">Lightship (MT)</label>
+                                <div class="tooltip-wrap"><span class="tooltip-content">Lihat 'Stability Booklet'</span><input type="number" step="0.01" id="f-lightship" oninput="recalculate('final')" class="input-dummy text-base md:text-sm"></div>
+                            </div>
+                        </div>
+
+                        <!-- HYDROSTATIC TABLE SECTION -->
+                        <div class="bg-blue-50 p-3 md:p-4 rounded border border-blue-200">
+                            <h3 class="font-bold text-blue-800 mb-3 text-sm border-b border-blue-200 pb-2 flex items-center gap-2"><i class="fas fa-table"></i>Tabel Hydrostatic (Interpolasi)</h3>
+                            
+                            <!-- Quarter Drafts -->
+                            <div class="grid grid-cols-2 gap-4 mb-3">
+                                <div>
+                                    <label class="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Q1 (Bawah)</label>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Cari draft di Buku Hydrostatic (Bawah)</span><input type="number" step="0.01" id="f-q1" oninput="recalculate('final')" class="input-dummy text-center text-base md:text-sm font-bold text-blue-800"></div>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold uppercase text-slate-500 mb-1 block">Q2 (Atas)</label>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Cari draft di Buku Hydrostatic (Atas)</span><input type="number" step="0.01" id="f-q2" oninput="recalculate('final')" class="input-dummy text-center text-base md:text-sm font-bold text-blue-800"></div>
+                                </div>
+                            </div>
+
+                            <!-- Values -->
+                            <div class="space-y-2 text-xs md:text-sm">
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <div class="font-bold text-[10px] md:text-xs text-slate-600">Displacement</div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai Disp Q1</span><input type="number" step="0.01" id="f-disp1" oninput="recalculate('final')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai Disp Q2</span><input type="number" step="0.01" id="f-disp2" oninput="recalculate('final')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <div class="font-bold text-[10px] md:text-xs text-slate-600">LCF</div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai LCF Q1</span><input type="number" step="0.01" id="f-lcf1" oninput="recalculate('final')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai LCF Q2</span><input type="number" step="0.01" id="f-lcf2" oninput="recalculate('final')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <div class="font-bold text-[10px] md:text-xs text-slate-600">TPC</div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai TPC Q1</span><input type="number" step="0.01" id="f-tpc1" oninput="recalculate('final')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai TPC Q2</span><input type="number" step="0.01" id="f-tpc2" oninput="recalculate('final')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <div class="font-bold text-[10px] md:text-xs text-slate-600">MTC 1</div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai MTC Q1</span><input type="number" step="0.01" id="f-mtc1-1" oninput="recalculate('final')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai MTC Q2</span><input type="number" step="0.01" id="f-mtc1-2" oninput="recalculate('final')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <div class="font-bold text-[10px] md:text-xs text-slate-600">MTC 2</div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai MTC Q2</span><input type="number" step="0.01" id="f-mtc2-1" oninput="recalculate('final')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                    <div class="tooltip-wrap"><span class="tooltip-content">Nilai MTC Q2</span><input type="number" step="0.01" id="f-mtc2-2" oninput="recalculate('final')" class="input-dummy p-1 text-right text-base md:text-sm"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Calculation Logic -->
+                <div class="mt-8 bg-slate-800 text-white p-4 rounded-lg shadow-lg">
+                    <h3 class="text-base md:text-lg font-bold mb-3 flex items-center gap-2"><i class="fas fa-calculator text-yellow-400"></i>Hasil Perhitungan Akhir (Final)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 text-center text-sm items-center">
+                        <div class="bg-slate-700 p-2 rounded w-full">
+                            <span class="block text-slate-400 text-xs mb-1">Disp (Koreksi Density)</span>
+                            <span id="f-disp-net" class="font-mono text-base md:text-lg font-bold">0.00</span>
+                        </div>
+                        <div class="text-slate-400 font-bold hidden md:block">-</div>
+                        <div class="bg-slate-700 p-2 rounded w-full">
+                            <span class="block text-slate-400 text-xs mb-1">Lightship + Ded</span>
+                            <span id="f-deduct-total" class="font-mono text-base md:text-lg text-red-300">0.00</span>
+                        </div>
+                        <div class="bg-slate-700 p-2 rounded w-full relative">
+                             <span class="absolute -left-3 top-4 text-slate-500 hidden md:block">-</span>
+                            <span class="block text-slate-400 text-xs mb-1">Constant (Dari Initial)</span>
+                            <span id="f-constant-ref" class="font-mono text-base md:text-lg text-yellow-300">0.00</span>
+                        </div>
+                        <div class="bg-green-600 p-3 rounded border-2 border-green-400 shadow-lg w-full relative mt-2 md:mt-0">
+                             <span class="absolute -left-4 top-4 text-white hidden md:block">=</span>
+                            <span class="block text-green-100 text-xs font-bold uppercase mb-1">Net Cargo (Muatan)</span>
+                            <span id="cargo" class="font-mono text-lg md:text-xl font-bold">0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: GUIDE & SOURCES -->
+        <div id="guide" class="tab-content">
+            <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm border border-slate-200">
+                <h2 class="section-title text-lg md:text-xl">Penjelasan & Mapping Istilah Situbar</h2>
+                <p class="mb-4 text-sm md:text-base text-slate-600">Panduan ini mencocokkan istilah umum Draft Survey dengan kolom input yang ada pada aplikasi <strong>Situbar</strong>.</p>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-xs md:text-sm text-left text-slate-600 border rounded-lg">
+                        <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+                            <tr>
+                                <th scope="col" class="px-3 md:px-6 py-3 border-b w-1/3">Istilah Teknis (Situbar)</th>
+                                <th scope="col" class="px-3 md:px-6 py-3 border-b">Penjelasan & Fungsi</th>
+                                <th scope="col" class="px-3 md:px-6 py-3 border-b">Sumber Data (Klik untuk Contoh)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <!-- Group 1 -->
+                            <tr class="bg-white">
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="font-bold text-slate-800">Draft Marks</div>
+                                    <div class="situbar-badge">Input: Port/Starboard Draft</div>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">Angka kedalaman kapal (Depan/Fwd, Tengah/Mid, Belakang/Aft).</td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <a href="https://www.google.com/search?q=ship+draft+marks+reading&tbm=isch" target="_blank" class="text-blue-600 hover:text-blue-800 hover:underline flex items-center group">
+                                        <i class="fas fa-binoculars mr-2 text-blue-500 group-hover:text-blue-700"></i> 
+                                        Visual lambung kapal
+                                        <i class="fas fa-external-link-alt text-[10px] ml-1 opacity-50"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            
+                            <!-- Koreksi Jarak -->
+                            <tr class="bg-slate-50">
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="font-bold text-slate-800">Koreksi Garis Tegak</div>
+                                    <div class="situbar-badge">Input: dF (m), dA (m), dM (m)</div>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <p class="mb-2"><strong>Jarak Koreksi Posisi Draft Mark:</strong> Karena angka draft di lambung kapal seringkali tidak tepat berada di posisi garis tegak referensi (Perpendicular), perlu dilakukan koreksi jarak.</p>
+                                    
+                                    <div class="bg-slate-50 p-2 rounded text-xs space-y-2 border border-slate-200 mt-2">
+                                        <div>
+                                            <span class="font-bold text-slate-700">Garis Referensi Utama:</span>
+                                            <ul class="list-disc pl-4 text-slate-600">
+                                                <li><strong>FP (Forward Perpendicular):</strong> Garis tegak khayal di ujung depan kapal (biasanya di linggi haluan).</li>
+                                                <li><strong>AP (After Perpendicular):</strong> Garis tegak khayal di ujung belakang kapal (biasanya di poros kemudi).</li>
+                                                <li><strong>Midship:</strong> Titik tepat di tengah-tengah antara FP dan AP.</li>
+                                            </ul>
+                                        </div>
+                                        <div class="border-t border-slate-200 pt-2">
+                                            <span class="font-bold text-slate-700">Definisi Input:</span>
+                                            <ul class="list-disc pl-4 text-slate-600">
+                                                <li><strong>dF (Correction):</strong> Jarak mendatar dari <em>Angka Draft Depan</em> ke garis <strong>FP</strong>.</li>
+                                                <li><strong>dA (Correction):</strong> Jarak mendatar dari <em>Angka Draft Belakang</em> ke garis <strong>AP</strong>.</li>
+                                                <li><strong>dM (Correction):</strong> Jarak mendatar dari <em>Angka Draft Tengah</em> ke garis <strong>Midship</strong>.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <a href="https://www.google.com/search?q=ship+capacity+plan+perpendiculars&tbm=isch" target="_blank" class="text-blue-600 hover:text-blue-800 hover:underline flex items-center group">
+                                        <i class="fas fa-file-alt mr-2 text-orange-500 group-hover:text-orange-700"></i> 
+                                        Stability Booklet / Capacity Plan
+                                        <i class="fas fa-external-link-alt text-[10px] ml-1 opacity-50"></i>
+                                    </a>
+                                </td>
+                            </tr>
+
+                            <!-- Plimsoll -->
+                            <tr class="bg-white">
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="font-bold text-slate-800">Letak Marka Tengah</div>
+                                    <div class="situbar-badge">Input: Plimsoll Mark Position</div>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">
+                                    Posisi tanda Plimsoll relatif terhadap tengah kapal (Midship). Pilih salah satu:
+                                    <ul class="list-disc pl-4 text-xs mt-1 text-slate-500">
+                                        <li><strong>Behind:</strong> Marka draft tengah berada di <em>belakang</em> midship.</li>
+                                        <li><strong>Front:</strong> Marka draft tengah berada di <em>depan</em> midship.</li>
+                                    </ul>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <a href="https://www.google.com/search?q=general+arrangement+plan+ship+midship&tbm=isch" target="_blank" class="text-blue-600 hover:text-blue-800 hover:underline flex items-center group">
+                                        <i class="fas fa-ship mr-2 text-slate-500 group-hover:text-slate-700"></i> 
+                                        General Arrangement Plan
+                                        <i class="fas fa-external-link-alt text-[10px] ml-1 opacity-50"></i>
+                                    </a>
+                                </td>
+                            </tr>
+
+                            <!-- Hydrostatic Inputs -->
+                            <tr class="bg-blue-50">
+                                <td class="px-3 md:px-6 py-4 border-l-4 border-blue-500">
+                                    <div class="font-bold text-blue-800">Tabel Hydrostatic</div>
+                                    <div class="situbar-badge">Input: Q1/Q2, Disp, LCF, TPC, MTC</div>
+                                </td>
+                                <td class="px-3 md:px-6 py-4 text-blue-900">
+                                    Bagian ini diisi manual dengan melihat buku <em>Hydrostatic Table</em> kapal berdasarkan hasil Quarter Mean (QM) yang dihitung aplikasi.
+                                    <ul class="list-disc pl-4 text-xs mt-1 text-blue-700">
+                                        <li><strong>Quarter 1/2:</strong> Draft tabel yang mengapit QM.</li>
+                                        <li><strong>Disp:</strong> Berat benaman di draft tsb.</li>
+                                        <li><strong>LCF/TPC/MTC:</strong> Data teknis di draft tsb.</li>
+                                    </ul>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <a href="https://www.google.com/search?q=ship+hydrostatic+table+example&tbm=isch" target="_blank" class="text-blue-600 hover:text-blue-800 hover:underline flex items-center group">
+                                        <i class="fas fa-table mr-2 text-blue-800 group-hover:text-blue-900"></i> 
+                                        Hydrostatic Table Book
+                                        <i class="fas fa-external-link-alt text-[10px] ml-1 opacity-50"></i>
+                                    </a>
+                                </td>
+                            </tr>
+
+                            <!-- Deductibles -->
+                            <tr class="bg-white">
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="font-bold text-slate-800">Cairan Pengurang</div>
+                                    <div class="situbar-badge">Input: Data Deductible Weight</div>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">Berat Fresh Water, Ballast, dan BBM yang harus dikurangi.</td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <a href="https://www.google.com/search?q=ship+tank+sounding+table+example&tbm=isch" target="_blank" class="text-blue-600 hover:text-blue-800 hover:underline flex items-center group">
+                                        <i class="fas fa-ruler mr-2 text-green-500 group-hover:text-green-700"></i> 
+                                        Sounding Tank
+                                        <i class="fas fa-external-link-alt text-[10px] ml-1 opacity-50"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Calculation Method Section (NEW) -->
+                <div class="mt-8 mb-8">
+                    <h3 class="font-bold text-slate-700 mb-3 text-lg">Metode Perhitungan & Rumus</h3>
+                    <div class="bg-white border border-slate-200 rounded-lg p-4 text-sm text-slate-700 space-y-4 shadow-sm">
+                        
+                        <div class="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-500 mb-4 text-xs md:text-sm">
+                            <i class="fas fa-info-circle text-blue-600 mr-1"></i> 
+                            <strong>Catatan Penting:</strong> Langkah 1, 2, dan 3 di bawah ini dilakukan <strong>DUA KALI</strong>, yaitu saat Initial (kosong) dan saat Final (muat).
+                        </div>
+
+                        <!-- QM Section -->
+                        <div>
+                            <h4 class="font-bold text-blue-600 mb-2">1. Menghitung Quarter Mean (QM)</h4>
+                            <p class="mb-2">Aplikasi menggunakan rumus <em>Mean of Means</em> untuk mendapatkan draft rata-rata yang akurat:</p>
+                            <div class="bg-slate-100 p-3 rounded font-mono text-xs md:text-sm">
+                                Mean Fwd = (Fwd Port + Fwd Stbd) / 2 <br>
+                                Mean Mid = (Mid Port + Mid Stbd) / 2 <br>
+                                Mean Aft = (Aft Port + Aft Stbd) / 2 <br><br>
+                                <strong>QM = (Mean Fwd + 6 × Mean Mid + Mean Aft) / 8</strong>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1 italic">*Jika posisi marka tengah tidak tepat di Midship, dilakukan koreksi jarak (Perpendicular Correction) terlebih dahulu pada Mean Mid.</p>
+                        </div>
+
+                        <!-- Interpolation Section -->
+                        <div>
+                            <h4 class="font-bold text-blue-600 mb-2">2. Interpolasi Hydrostatic</h4>
+                            <p class="mb-2">Nilai Displacement diambil dari tabel hydrostatic berdasarkan nilai QM. Jika QM berada di antara dua nilai tabel (Q1 dan Q2), digunakan interpolasi linear:</p>
+                            <div class="bg-slate-100 p-3 rounded font-mono text-xs md:text-sm">
+                                Faktor = (QM - Q1) / (Q2 - Q1) <br>
+                                Disp Gross = Disp1 + ((Disp2 - Disp1) × Faktor)
+                            </div>
+                        </div>
+
+                        <!-- Density Correction -->
+                        <div>
+                            <h4 class="font-bold text-blue-600 mb-2">3. Koreksi Density</h4>
+                            <p class="mb-2">Mengubah berat benaman volume air payau/tawar menjadi berat di air laut standar (1.025):</p>
+                            <div class="bg-slate-100 p-3 rounded font-mono text-xs md:text-sm">
+                                <strong>Net Disp = Gross Disp × (Density Aktual / 1.025)</strong>
+                            </div>
+                        </div>
+
+                        <!-- Final Calculation Split -->
+                        <div>
+                            <h4 class="font-bold text-green-600 mb-2">4. Menghitung Hasil Akhir (Initial vs Final)</h4>
+                            <p class="mb-3">Disinilah perbedaan tujuan antara Initial dan Final:</p>
+                            
+                            <!-- Initial Box -->
+                            <div class="border border-slate-200 rounded mb-3 overflow-hidden">
+                                <div class="bg-slate-100 px-3 py-1 font-bold text-xs border-b border-slate-200">A. INITIAL SURVEY (KAPAL KOSONG)</div>
+                                <div class="p-3 bg-white">
+                                    <p class="text-xs mb-1">Target: Mencari <strong>Constant (Konstanta)</strong> kapal.</p>
+                                    <div class="bg-yellow-50 p-2 rounded font-mono text-xs text-yellow-800 border border-yellow-100">
+                                        Constant = Net Disp Initial - (Lightship + Deductibles Initial)
+                                    </div>
+                                    <p class="text-[10px] text-slate-500 mt-1 italic">*Nilai ini disimpan untuk dipakai di Final Survey.</p>
+                                </div>
+                            </div>
+
+                            <!-- Final Box -->
+                            <div class="border border-slate-200 rounded overflow-hidden">
+                                <div class="bg-slate-100 px-3 py-1 font-bold text-xs border-b border-slate-200">B. FINAL SURVEY (SETELAH MUAT)</div>
+                                <div class="p-3 bg-white">
+                                    <p class="text-xs mb-1">Target: Mencari <strong>Net Cargo (Muatan Bersih)</strong>.</p>
+                                    <div class="bg-green-50 p-2 rounded font-mono text-xs text-green-800 border border-green-100">
+                                        Net Cargo = Net Disp Final - (Lightship + Deductibles Final + Constant)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- FAQ Section (NEW) -->
+                <div class="mt-8">
+                    <h3 class="font-bold text-slate-700 mb-3 text-lg">FAQ & Troubleshooting</h3>
+                    <div class="space-y-3">
+                        
+                        <!-- NEW FAQ Item: Definition of Constant -->
+                        <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
+                            <h4 class="font-bold text-purple-700 text-sm">Q: Apa itu Constant Kapal (Konstanta)?</h4>
+                            <p class="text-sm text-purple-900 mt-1">
+                                <strong>Definisi:</strong> Berat benda-benda di atas kapal yang sifatnya "tetap" namun tidak termasuk dalam data <em>Lightship</em> (berat kosong pabrik) maupun muatan yang tercatat.
+                                <br><br>
+                                <strong>Yang termasuk dalam Constant:</strong>
+                                <ul class="list-disc pl-4 mt-1">
+                                    <li>Sisa lumpur/endapan (mud) di dasar tangki ballast.</li>
+                                    <li>Stok makanan (provisions), air minum kemasan, & barang pribadi kru.</li>
+                                    <li>Lapisan cat yang menebal, karat, & spare part mesin di gudang.</li>
+                                    <li>Toleransi/selisih berat pembuatan kapal dari galangan.</li>
+                                </ul>
+                                <br>
+                                <em>Nilai ini dicari saat Initial Survey dan dipakai sebagai pengurang wajib saat Final Survey.</em>
+                            </p>
+                        </div>
+
+                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                            <h4 class="font-bold text-red-700 text-sm">Q: Apa artinya jika Constant Kapal hasilnya Negatif?</h4>
+                            <p class="text-sm text-red-900 mt-1">
+                                <strong>Artinya:</strong> Berat kapal hasil survei saat ini (Displacement) <em>lebih kecil</em> daripada berat teori (Lightship + Cairan).
+                                <br><br>
+                                <strong>Kemungkinan Penyebab:</strong>
+                                <ul class="list-disc pl-4 mt-1">
+                                    <li>Input <em>Lightship</em> terlalu besar (tidak sesuai kondisi aktual).</li>
+                                    <li>Estimasi cairan (BBM/Air) terlalu tinggi (sounding salah).</li>
+                                    <li>Pembacaan Draft terlalu rendah (kapal terbaca lebih ringan).</li>
+                                    <li>Kesalahan input Density (terlalu kecil).</li>
+                                </ul>
+                            </p>
+                        </div>
+
+                        <!-- Added new FAQ item about Draft Changes -->
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                            <h4 class="font-bold text-blue-700 text-sm">Q: Apakah Data Draft Initial & Final Bisa Berubah? Apa Faktornya?</h4>
+                            <p class="text-sm text-blue-900 mt-1">
+                                <strong>Ya, pasti berubah.</strong> Selisih perubahan inilah yang dihitung untuk mendapatkan berat muatan.
+                                <br><br>
+                                <strong>Faktor Utama yang Mempengaruhi:</strong>
+                                <ul class="list-disc pl-4 mt-1">
+                                    <li><strong>Muatan (Cargo):</strong> Faktor terbesar. Muat barang = Draft turun (angka makin besar).</li>
+                                    <li><strong>Operasi Ballast:</strong> Membuang air ballast saat muat (de-ballasting) akan mengurangi draft, sedangkan mengisi ballast menambah draft.</li>
+                                    <li><strong>Konsumabel (BBM & Air):</strong> Pemakaian harian mesin atau pengisian bekal ulang antara waktu Initial dan Final.</li>
+                                    <li><strong>Densitas Air (Density):</strong> Jika kapal pindah dari air tawar ke laut, kapal akan sedikit "naik" (draft berkurang) walau berat sama.</li>
+                                </ul>
+                            </p>
+                        </div>
+
+                        <!-- NEW FAQ Item specifically for Port vs Starboard (List) -->
+                        <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
+                            <h4 class="font-bold text-yellow-800 text-sm">Q: Kenapa Draft Port (Kiri) & Starboard (Kanan) Beda?</h4>
+                            <p class="text-sm text-yellow-900 mt-1">
+                                Perbedaan angka kiri dan kanan disebut <strong>LIST (Kemiringan)</strong>.
+                                <br><br>
+                                <strong>Kenapa harus diukur dua sisi?</strong>
+                                <br>Untuk mencari nilai rata-rata (Mean). Jika kapal miring ke kiri, draft kiri akan dalam dan kanan akan dangkal. Menghitung rata-ratanya akan menghilangkan error akibat kemiringan tersebut.
+                                <br><br>
+                                <strong>Penyebab Angka Port/Starboard Berubah/Beda:</strong>
+                                <ul class="list-disc pl-4 mt-1">
+                                    <li><strong>Distribusi Muatan:</strong> Muatan di palka kiri lebih berat dari kanan (atau sebaliknya).</li>
+                                    <li><strong>Isi Tangki:</strong> Tangki BBM/Ballast kiri dan kanan tidak seimbang isinya.</li>
+                                    <li><strong>Tali Tambat (Mooring):</strong> Tali ke dermaga terlalu kencang bisa "menarik" kapal miring ke satu sisi.</li>
+                                    <li><strong>Faktor Alam:</strong> Angin kencang atau arus sungai yang menekan satu sisi lambung kapal.</li>
+                                </ul>
+                            </p>
+                        </div>
+
+                        <!-- NEW FAQ Item: Initial vs Final Port/Stbd Comparison -->
+                        <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                            <h4 class="font-bold text-green-800 text-sm">Q: Apakah Draft Kiri/Kanan saat Initial & Final Pasti Berbeda?</h4>
+                            <p class="text-sm text-green-900 mt-1">
+                                <strong>YA, Pasti Berbeda Jauh.</strong>
+                                <br>
+                                Inilah inti dari Draft Survey:
+                                <ul class="list-disc pl-4 mt-1">
+                                    <li><strong>Initial (Kosong):</strong> Kapal ringan, terapung tinggi. Angka draft kecil (misal: 3.50m).</li>
+                                    <li><strong>Final (Isi):</strong> Kapal berat karena muatan, badan kapal tenggelam. Angka draft besar (misal: 9.20m).</li>
+                                </ul>
+                                <br>
+                                <em>Catatan:</em> Kemiringan (List) juga bisa berubah. Saat Initial kapal mungkin miring ke Kiri, tapi saat Final bisa berubah miring ke Kanan tergantung cara pemuatan (stowage plan).
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-6 mt-12 text-center text-sm border-t border-slate-800">
+        <p>Created by <span class="text-white font-semibold">Epiphania Rino PDAD BC Banjarmasin</span></p>
+        <p class="text-xs mt-1">Date: 21/1/2026</p>
+    </footer>
+
+    <!-- AI ASSISTANT FLOAT & MODAL -->
+    <button onclick="toggleChat()" class="fixed bottom-6 right-4 md:right-6 bg-blue-600 hover:bg-blue-700 text-white p-3 md:p-4 rounded-full shadow-lg transition-transform hover:scale-110 z-50 flex items-center justify-center">
+        <i class="fas fa-robot text-xl md:text-2xl"></i>
+    </button>
+
+    <div id="chat-window" class="fixed bottom-20 md:bottom-24 right-2 left-2 md:left-auto md:right-6 w-auto md:w-96 h-96 bg-white rounded-xl shadow-2xl border border-slate-200 z-50 hidden flex flex-col opacity-0 scale-90 transform origin-bottom-right">
+        <!-- Header -->
+        <div class="bg-blue-600 text-white p-3 md:p-4 rounded-t-xl flex justify-between items-center shadow-md">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-robot"></i>
+                <span class="font-bold text-sm md:text-base">Asisten Simulasi Situbar BC Banjarmasin</span>
+            </div>
+            <button onclick="toggleChat()" class="hover:text-gray-200 transition-colors"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <!-- Messages -->
+        <div id="chat-messages" class="flex-1 p-3 md:p-4 overflow-y-auto bg-slate-50 space-y-3 text-sm">
+            <!-- Welcome Message -->
+            <div class="flex justify-start">
+                <div class="bg-white border border-slate-200 text-slate-700 p-3 rounded-lg rounded-tl-none max-w-[85%] shadow-sm prose">
+                    Halo! Saya Asisten AI Simulasi Situbar BC Banjarmasin. 🤖
+                    <br><br>
+                    Tanyakan apa saja tentang Draught Survey, istilah teknis, atau cara perhitungan!
+                </div>
+            </div>
+        </div>
+    
+        <!-- Input -->
+        <div class="p-3 border-t border-slate-200 bg-white rounded-b-xl">
+            <div class="flex gap-2">
+                <input type="text" id="chat-input" onkeypress="handleEnter(event)" placeholder="Tanya sesuatu..." class="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors text-base md:text-sm">
+                <button onclick="sendMessage()" class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script for Tabs & Generation & Chat -->
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+
+            const buttons = ['btn-initial', 'btn-final', 'btn-guide'];
+            buttons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                btn.classList.remove('text-blue-600', 'border-blue-600', 'bg-white');
+                btn.classList.add('text-slate-500', 'border-transparent');
+                
+                if (btnId === 'btn-' + tabName) {
+                    btn.classList.remove('text-slate-500', 'border-transparent');
+                    btn.classList.add('text-blue-600', 'border-blue-600', 'bg-white');
+                }
+            });
+        }
+
+        // --- DATA GENERATION LOGIC ---
+
+        function r(min, max, decimals = 2) {
+            const val = Math.random() * (max - min) + min;
+            return parseFloat(val.toFixed(decimals));
+        }
+
+        function fmt(num) {
+            return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        
+        function getVal(id) {
+            const el = document.getElementById(id);
+            if (!el) return 0;
+            const val = parseFloat(el.value);
+            return isNaN(val) ? 0 : val;
+        }
+
+        let shipData = {
+            lightship: 0, density: 0, lbp: 0, df: 0, da: 0, dm: 0, constant: 0
+        };
+
+        function generateAllData() {
+            const lightship = r(4500, 6500, 2);
+            const density = r(1.010, 1.022, 3);
+            const lbp = r(150, 190, 2);
+            const df = r(-1.5, 1.5, 2);
+            const da = r(3.5, 6.0, 2);
+            const dm = r(0.1, 1.2, 2);
+
+            const num = Math.floor(Math.random() * 999);
+            document.getElementById('ship-name').value = `MV. DUMMY NIAGA ${num}`;
+            
+            document.getElementById('i-plimsoll').value = Math.random() > 0.5 ? 'behind' : 'front';
+            document.getElementById('f-plimsoll').value = Math.random() > 0.5 ? 'behind' : 'front';
+
+            ['i', 'f'].forEach(p => {
+                document.getElementById(p + '-lbp').value = lbp;
+                document.getElementById(p + '-df').value = df;
+                document.getElementById(p + '-da').value = da;
+                document.getElementById(p + '-dm').value = dm;
+                document.getElementById(p + '-density').value = density;
+                document.getElementById(p + '-lightship').value = lightship;
+            });
+
+            const iBase = r(3.2, 4.5);
+            const iDrafts = generateDrafts(iBase, 0.5);
+            fillDrafts('i', iDrafts);
+            
+            const iDed = { fw: r(100, 200), bw: r(3000, 4500), fo: r(400, 600), do: r(50, 100), lo: r(10, 20) };
+            fillDed('i', iDed);
+
+            const fBase = r(8.5, 10.5);
+            const fDrafts = generateDrafts(fBase, 0.2);
+            fillDrafts('f', fDrafts);
+            
+            const fDed = {
+                fw: iDed.fw - r(5, 15),
+                bw: r(50, 150),
+                fo: iDed.fo - r(10, 30),
+                do: iDed.do - r(2, 5),
+                lo: iDed.lo
+            };
+            fillDed('f', fDed);
+
+            fillHydroTable('i', calculateQM('i'));
+            fillHydroTable('f', calculateQM('f'));
+
+            recalculate('initial');
+            
+            document.querySelectorAll('.input-dummy').forEach(el => {
+                el.classList.add('updated');
+                setTimeout(() => el.classList.remove('updated'), 500);
+            });
+        }
+
+        function generateDrafts(base, trim) {
+            const fwd = base - (trim * 0.4) + r(-0.05, 0.05);
+            const aft = base + (trim * 0.6) + r(-0.05, 0.05);
+            return {
+                fp: fwd + r(-0.02, 0.02), fs: fwd + r(-0.02, 0.02),
+                mp: base + r(-0.02, 0.02), ms: base + r(-0.02, 0.02),
+                ap: aft + r(-0.02, 0.02), as: aft + r(-0.02, 0.02)
+            };
+        }
+
+        function fillDrafts(prefix, d) {
+            document.getElementById(prefix + '-fp').value = d.fp.toFixed(2);
+            document.getElementById(prefix + '-fs').value = d.fs.toFixed(2);
+            document.getElementById(prefix + '-mp').value = d.mp.toFixed(2);
+            document.getElementById(prefix + '-ms').value = d.ms.toFixed(2);
+            document.getElementById(prefix + '-ap').value = d.ap.toFixed(2);
+            document.getElementById(prefix + '-as').value = d.as.toFixed(2);
+        }
+
+        function fillDed(prefix, d) {
+            document.getElementById(prefix + '-fw').value = d.fw.toFixed(2);
+            document.getElementById(prefix + '-bw').value = d.bw.toFixed(2);
+            document.getElementById(prefix + '-fo').value = d.fo.toFixed(2);
+            document.getElementById(prefix + '-do').value = d.do.toFixed(2);
+            document.getElementById(prefix + '-lo').value = d.lo.toFixed(2);
+        }
+
+        function fillHydroTable(prefix, qm) {
+            const interval = 0.05; 
+            const q1 = Math.floor(qm / interval) * interval;
+            const q2 = q1 + interval;
+            
+            const vol1 = 160 * 24 * q1 * 0.75; const disp1 = vol1 * 1.025;
+            const vol2 = 160 * 24 * q2 * 0.75; const disp2 = vol2 * 1.025;
+            
+            document.getElementById(prefix + '-q1').value = q1.toFixed(2);
+            document.getElementById(prefix + '-q2').value = q2.toFixed(2);
+            document.getElementById(prefix + '-disp1').value = disp1.toFixed(2);
+            document.getElementById(prefix + '-disp2').value = disp2.toFixed(2);
+            
+            document.getElementById(prefix + '-lcf1').value = (80 + r(-1,1)).toFixed(2);
+            document.getElementById(prefix + '-lcf2').value = (80 + r(-1,1)).toFixed(2);
+            document.getElementById(prefix + '-tpc1').value = (disp1/q1/100).toFixed(2);
+            document.getElementById(prefix + '-tpc2').value = (disp2/q2/100).toFixed(2);
+            document.getElementById(prefix + '-mtc1-1').value = (disp1*2/10000).toFixed(2);
+            document.getElementById(prefix + '-mtc1-2').value = ((disp1*2/10000)+0.5).toFixed(2);
+            document.getElementById(prefix + '-mtc2-1').value = (disp2*2/10000).toFixed(2);
+            document.getElementById(prefix + '-mtc2-2').value = ((disp2*2/10000)+0.5).toFixed(2);
+        }
+        
+        function calculateQM(prefix) {
+            const fp = getVal(prefix + '-fp'); const fs = getVal(prefix + '-fs');
+            const mp = getVal(prefix + '-mp'); const ms = getVal(prefix + '-ms');
+            const ap = getVal(prefix + '-ap'); const as = getVal(prefix + '-as');
+            const lbp = getVal(prefix + '-lbp');
+            const dm = getVal(prefix + '-dm');
+            
+            const meanFwd = (fp + fs) / 2;
+            const meanMidObs = (mp + ms) / 2;
+            const meanAft = (ap + as) / 2;
+            
+            const trim = meanAft - meanFwd;
+            const correction = lbp > 0 ? (trim * dm) / lbp : 0;
+            const plimsollPos = document.getElementById(prefix + '-plimsoll').value;
+            
+            let meanMidCorrected = meanMidObs;
+            if (plimsollPos === 'behind') meanMidCorrected = meanMidObs - correction;
+            else meanMidCorrected = meanMidObs + correction;
+            
+            return (meanFwd + (6 * meanMidCorrected) + meanAft) / 8;
+        }
+
+        function recalculate(type) {
+            const p = type === 'initial' ? 'i' : 'f';
+            
+            const lbp = getVal(p + '-lbp');
+            const df = getVal(p + '-df');
+            const da = getVal(p + '-da');
+            const dm = getVal(p + '-dm');
+            const density = getVal(p + '-density');
+            const lightship = getVal(p + '-lightship');
+
+            const fp = getVal(p + '-fp'); const fs = getVal(p + '-fs');
+            const mp = getVal(p + '-mp'); const ms = getVal(p + '-ms');
+            const ap = getVal(p + '-ap'); const as = getVal(p + '-as');
+
+            const meanFwd = (fp + fs) / 2;
+            const meanMidObs = (mp + ms) / 2;
+            const meanAft = (ap + as) / 2;
+
+            const trim = meanAft - meanFwd;
+            const correction = lbp > 0 ? (trim * dm) / lbp : 0;
+            const plimsollPos = document.getElementById(p + '-plimsoll').value;
+            
+            let meanMidCorrected = meanMidObs;
+            if (plimsollPos === 'behind') meanMidCorrected = meanMidObs - correction;
+            else meanMidCorrected = meanMidObs + correction;
+
+            const qm = (meanFwd + (6 * meanMidCorrected) + meanAft) / 8;
+            document.getElementById(p + '-qm').innerText = qm.toFixed(4);
+
+            const totalDed = getVal(p + '-fw') + getVal(p + '-bw') + getVal(p + '-fo') + getVal(p + '-do') + getVal(p + '-lo');
+            document.getElementById(p + '-tot-ded').innerText = fmt(totalDed);
+
+            const q1 = getVal(p + '-q1');
+            const q2 = getVal(p + '-q2');
+            const disp1 = getVal(p + '-disp1');
+            const disp2 = getVal(p + '-disp2');
+
+            let grossDisp = 0;
+            if (q2 !== q1) {
+                const factor = (qm - q1) / (q2 - q1);
+                grossDisp = disp1 + ((disp2 - disp1) * factor);
+            } else {
+                grossDisp = disp1;
+            }
+
+            const netDisp = grossDisp * (density / 1.025);
+
+            // FIX: Check if element exists before setting (f-disp-gross is missing in HTML)
+            const elGross = document.getElementById(p + '-disp-gross');
+            if (elGross) elGross.innerText = fmt(grossDisp);
+            
+            document.getElementById(p + '-disp-net').innerText = fmt(netDisp);
+            
+            const deduction = lightship + totalDed;
+            document.getElementById(p + '-deduct-total').innerText = fmt(deduction);
+
+            if (type === 'initial') {
+                const constant = netDisp - deduction;
+                document.getElementById('constant').innerText = fmt(constant) + " MT";
+                
+                const fConstRef = document.getElementById('f-constant-ref');
+                if(fConstRef) fConstRef.innerText = fmt(constant);
+                
+                requestAnimationFrame(() => recalculate('final'));
+            } 
+            else if (type === 'final') {
+                let constText = document.getElementById('constant').innerText.replace(" MT", "").replace(/,/g, "");
+                let constantVal = parseFloat(constText);
+                if(isNaN(constantVal)) constantVal = 0;
+
+                document.getElementById('f-constant-ref').innerText = fmt(constantVal);
+
+                const cargo = netDisp - deduction - constantVal;
+                document.getElementById('cargo').innerText = fmt(cargo) + " MT";
+            }
+        }
+
+        // --- GEMINI AI CHATBOT LOGIC ---
+        const apiKey = ""; // API Key disuntikkan secara otomatis di environment preview
+
+        async function getAIResponse(input) {
+            // 1. Coba Panggil API Gemini (Jika Key Tersedia)
+            if (apiKey) {
+                try {
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                    
+                    const systemInstruction = `
+                    Anda adalah asisten ahli untuk aplikasi 'Situbar' (Sistem Hitung Barang) yang digunakan oleh Surveyor dan Bea Cukai untuk Draught Survey kapal.
+                    
+                    Tugas Anda:
+                    1. Menjelaskan istilah teknis seperti Draft, Trim, Density, Constant, LCF, TPC, MTC, dll dengan bahasa Indonesia yang profesional namun mudah dimengerti.
+                    2. Menjelaskan rumus perhitungan muatan (Final Net Displacement - Lightship - Deductibles - Constant).
+                    3. Memberikan tips validasi data agar tidak terjadi kecurangan (misal manipulasi ballast).
+                    
+                    Jawablah dengan ringkas, padat, dan membantu.
+                    `;
+
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: input }] }],
+                            systemInstruction: { parts: [{ text: systemInstruction }] }
+                        })
+                    });
+
+                    if (!response.ok) throw new Error('API Response not ok');
+
+                    const data = await response.json();
+                    if (data.candidates && data.candidates.length > 0) {
+                        // Merender markdown sederhana (bold/italic/lists) akan ditangani oleh CSS prose
+                        return data.candidates[0].content.parts[0].text;
+                    }
+                } catch (e) {
+                    console.error("Gemini API Error, switching to fallback:", e);
+                }
+            }
+
+            // 2. Fallback Lokal (Jika Offline / Tanpa Key)
+            return getLocalResponse(input);
+        }
+
+        function getLocalResponse(input) {
+            const lower = input.toLowerCase();
+            if (lower.includes('draft') || lower.includes('ukur')) {
+                return "Draft Mark adalah angka kedalaman kapal. Diukur di 6 titik (Forward, Midle, After di sisi Kiri & Kanan). Jangan lupa koreksi jarak ke garis tegak (Perpendicular).";
+            }
+            if (lower.includes('constant') || lower.includes('konstan')) {
+                return "Constant adalah berat 'tak terdefinisi' di kapal (sisa lumpur, stok, cat, error table). Dihitung saat Initial Survey: Net Displacement - Lightship - Deductibles.";
+            }
+            if (lower.includes('density') || lower.includes('bj') || lower.includes('berat jenis')) {
+                return "Density standar air laut adalah 1.025. Jika Anda survey di sungai/air payau (misal 1.015), kapal akan tenggelam lebih dalam untuk berat yang sama. Aplikasi ini mengoreksi hal tersebut secara otomatis.";
+            }
+            if (lower.includes('muatan') || lower.includes('cargo') || lower.includes('hasil')) {
+                return "Berat Muatan (Net Cargo) dihitung saat Final Survey. Rumusnya: Net Displacement Final - Lightship - Deductibles Final - Constant Initial.";
+            }
+            if (lower.includes('situbar')) {
+                return "Situbar adalah Sistem Hitung Barang. Aplikasi ini membantu Surveyor atau petugas Bea Cukai menghitung draught survey dengan cepat dan akurat.";
+            }
+            if (lower.includes('trim')) {
+                return "Trim adalah selisih draft belakang dan depan. Koreksi Trim sangat penting agar pembacaan draft tengah akurat terhadap posisi Midship.";
+            }
+            
+            return "Mode Offline: Maaf, saya tidak mengerti pertanyaan spesifik itu. Coba tanya tentang 'Draft', 'Constant', atau 'Rumus Muatan'.";
+        }
+
+        function toggleChat() {
+            const chatWindow = document.getElementById('chat-window');
+            if (chatWindow.classList.contains('hidden')) {
+                chatWindow.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                    chatWindow.classList.remove('opacity-0', 'scale-90');
+                    chatWindow.classList.add('opacity-100', 'scale-100');
+                });
+            } else {
+                chatWindow.classList.remove('opacity-100', 'scale-100');
+                chatWindow.classList.add('opacity-0', 'scale-90');
+                setTimeout(() => {
+                    chatWindow.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            // User Message
+            addMessage(text, 'user');
+            input.value = '';
+
+            // Typing Indicator
+            const chatBox = document.getElementById('chat-messages');
+            const typingId = 'typing-' + Date.now();
+            const typingHTML = `
+                <div id="${typingId}" class="flex justify-start animate-pulse">
+                    <div class="bg-gray-100 text-gray-500 p-3 rounded-lg rounded-tl-none text-xs">
+                        Sedang memproses...
+                    </div>
+                </div>`;
+            chatBox.insertAdjacentHTML('beforeend', typingHTML);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Get AI Response
+            const aiText = await getAIResponse(text);
+
+            // Remove typing & Add Response
+            const typingEl = document.getElementById(typingId);
+            if(typingEl) typingEl.remove();
+            
+            addMessage(aiText, 'ai');
+        }
+
+        function addMessage(text, sender) {
+            const chatBox = document.getElementById('chat-messages');
+            const isUser = sender === 'user';
+            
+            // Convert newlines to <br> for display
+            const formattedText = text.replace(/\n/g, '<br>');
+
+            const div = document.createElement('div');
+            div.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
+            
+            div.innerHTML = `
+                <div class="${isUser ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border border-slate-200 text-slate-700 rounded-tl-none'} p-3 rounded-lg max-w-[85%] shadow-sm prose text-sm">
+                    ${formattedText}
+                </div>
+            `;
+            
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Generate data on load
+        window.onload = generateAllData;
+
+    </script>
+
+</body>
+</html>
