@@ -654,7 +654,12 @@
             <div class="glass-card">
                 <div class="card-header flex justify-between items-center">
                     <div><i class="fas fa-file-pdf text-red-500"></i> Simulasi Perhitungan Manual</div>
-                    <div class="text-xs font-normal bg-blue-100 text-blue-800 px-2 py-1 rounded">Studi Kasus</div>
+                    <div class="flex gap-2">
+                        <button onclick="loadSimData()" class="bg-green-100 text-green-700 px-3 py-1 rounded text-xs font-bold hover:bg-green-200 transition">
+                            <i class="fas fa-file-import"></i> Load Data Soal
+                        </button>
+                        <div class="text-xs font-normal bg-blue-100 text-blue-800 px-2 py-1 rounded">Studi Kasus</div>
+                    </div>
                 </div>
                 
                 <div class="p-4 grid lg:grid-cols-2 gap-6">
@@ -689,10 +694,22 @@
                             
                             <!-- SHIP PARTICULARS -->
                             <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
-                                <h4 class="font-bold text-slate-700 mb-3 border-b pb-1">Ship Particulars</h4>
-                                <div class="grid grid-cols-2 gap-3">
+                                <h4 class="font-bold text-slate-700 mb-3 border-b pb-1">Ship Particulars & Distances</h4>
+                                <div class="grid grid-cols-2 gap-3 mb-3">
                                     <div><label class="lbl">LBP (m)</label><input type="number" id="sim-lbp" class="inp" placeholder="0.00"></div>
                                     <div><label class="lbl">Lightship (MT)</label><input type="number" id="sim-lightship" class="inp" placeholder="0.00"></div>
+                                </div>
+                                <div class="grid grid-cols-4 gap-2">
+                                    <div><label class="lbl">dF (m)</label><input type="number" id="sim-df" class="inp" placeholder="Fwd to FP"></div>
+                                    <div><label class="lbl">dM (m)</label><input type="number" id="sim-dm" class="inp" placeholder="Mid to Midship"></div>
+                                    <div><label class="lbl">dA (m)</label><input type="number" id="sim-da" class="inp" placeholder="Aft to AP"></div>
+                                    <div>
+                                        <label class="lbl">Plimsoll Loc</label>
+                                        <select id="sim-plimsoll" class="inp">
+                                            <option value="ahead">Ahead of Mid</option>
+                                            <option value="behind">Behind of Mid</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
 
@@ -719,17 +736,50 @@
                                         <label class="lbl text-blue-600">Mean Draft Corrected:</label>
                                         <span id="sim-i-mean-res" class="font-mono font-bold">0.000</span>
                                     </div>
+                                    
+                                    <!-- Q1 Q2 Display -->
+                                    <div class="grid grid-cols-2 gap-4 mb-3 text-xs bg-slate-50 p-2 rounded border border-slate-100">
+                                        <div class="text-center">
+                                            <span class="block text-slate-500 font-bold">Q1 (Lower)</span>
+                                            <span id="sim-i-q1" class="font-mono font-bold text-blue-600">-</span>
+                                        </div>
+                                        <div class="text-center">
+                                            <span class="block text-slate-500 font-bold">Q2 (Upper)</span>
+                                            <span id="sim-i-q2" class="font-mono font-bold text-blue-600">-</span>
+                                        </div>
+                                    </div>
+
                                     <div class="grid grid-cols-2 gap-3">
-                                        <div><label class="lbl">Displacement (Table)</label><input type="number" id="sim-i-disp" class="inp" placeholder="At Mean Draft"></div>
+                                        <div><label class="lbl">Displacement (Table)</label><input type="number" id="sim-i-disp" class="inp" placeholder="Interpolated Disp"></div>
                                         <div><label class="lbl">LCF (m)</label><input type="number" id="sim-i-lcf" class="inp" placeholder="From AP/Mid"></div>
                                         <div><label class="lbl">TPC (MT/cm)</label><input type="number" id="sim-i-tpc" class="inp" placeholder="0.00"></div>
                                         <div><label class="lbl">MTC (MT.m/cm)</label><input type="number" id="sim-i-mtc" class="inp" placeholder="Diff MTC"></div>
                                     </div>
+                                    
+                                    <!-- Corrections Display -->
+                                    <div class="mt-3 pt-2 border-t border-slate-200 grid grid-cols-2 gap-2 text-xs">
+                                        <div><span class="block text-slate-400">Trim Corr 1:</span> <span id="sim-i-trim1" class="font-bold font-mono">0.000</span></div>
+                                        <div><span class="block text-slate-400">Trim Corr 2:</span> <span id="sim-i-trim2" class="font-bold font-mono">0.000</span></div>
+                                        <div><span class="block text-slate-400">Total Trim:</span> <span id="sim-i-trim-tot" class="font-bold font-mono text-blue-600">0.000</span></div>
+                                        <div><span class="block text-slate-400">Density Corr:</span> <span id="sim-i-dens-corr" class="font-bold font-mono text-red-600">0.000</span></div>
+                                    </div>
                                 </div>
 
                                 <!-- Deductibles & Density -->
-                                <div class="grid grid-cols-2 gap-3">
-                                    <div><label class="lbl">Deductibles (Total)</label><input type="number" id="sim-i-ded" class="inp" placeholder="Total Deduct"></div>
+                                <div class="bg-blue-100 p-3 rounded mb-3">
+                                    <label class="lbl font-bold mb-2 block">Deductibles Breakdown</label>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <div><label class="text-[10px] text-slate-500 font-bold">FW</label><input type="number" id="sim-i-fw" class="inp" placeholder="0"></div>
+                                        <div><label class="text-[10px] text-slate-500 font-bold">BW</label><input type="number" id="sim-i-bw" class="inp" placeholder="0"></div>
+                                        <div><label class="text-[10px] text-slate-500 font-bold">FO</label><input type="number" id="sim-i-fo" class="inp" placeholder="0"></div>
+                                        <div><label class="text-[10px] text-slate-500 font-bold">DO</label><input type="number" id="sim-i-do" class="inp" placeholder="0"></div>
+                                        <div><label class="text-[10px] text-slate-500 font-bold">LO</label><input type="number" id="sim-i-lo" class="inp" placeholder="0"></div>
+                                        <div><label class="text-[10px] text-slate-500 font-bold">Other</label><input type="number" id="sim-i-other" class="inp" placeholder="0"></div>
+                                    </div>
+                                    <div class="mt-2 text-right text-xs font-bold text-slate-600">Total Deductibles: <span id="sim-i-ded-total">0.000</span> MT</div>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 gap-3">
                                     <div><label class="lbl">Observed Density</label><input type="number" id="sim-i-dens" class="inp" placeholder="1.025"></div>
                                 </div>
 
@@ -765,17 +815,50 @@
                                         <label class="lbl text-green-600">Mean Draft Corrected:</label>
                                         <span id="sim-f-mean-res" class="font-mono font-bold">0.000</span>
                                     </div>
+
+                                    <!-- Q1 Q2 Display -->
+                                    <div class="grid grid-cols-2 gap-4 mb-3 text-xs bg-slate-50 p-2 rounded border border-slate-100">
+                                        <div class="text-center">
+                                            <span class="block text-slate-500 font-bold">Q1 (Lower)</span>
+                                            <span id="sim-f-q1" class="font-mono font-bold text-green-600">-</span>
+                                        </div>
+                                        <div class="text-center">
+                                            <span class="block text-slate-500 font-bold">Q2 (Upper)</span>
+                                            <span id="sim-f-q2" class="font-mono font-bold text-green-600">-</span>
+                                        </div>
+                                    </div>
+
                                     <div class="grid grid-cols-2 gap-3">
-                                        <div><label class="lbl">Displacement (Table)</label><input type="number" id="sim-f-disp" class="inp" placeholder="At Mean Draft"></div>
+                                        <div><label class="lbl">Displacement (Table)</label><input type="number" id="sim-f-disp" class="inp" placeholder="Interpolated Disp"></div>
                                         <div><label class="lbl">LCF (m)</label><input type="number" id="sim-f-lcf" class="inp" placeholder="From AP/Mid"></div>
                                         <div><label class="lbl">TPC (MT/cm)</label><input type="number" id="sim-f-tpc" class="inp" placeholder="0.00"></div>
                                         <div><label class="lbl">MTC (MT.m/cm)</label><input type="number" id="sim-f-mtc" class="inp" placeholder="Diff MTC"></div>
                                     </div>
+                                    
+                                    <!-- Corrections Display -->
+                                    <div class="mt-3 pt-2 border-t border-slate-200 grid grid-cols-2 gap-2 text-xs">
+                                        <div><span class="block text-slate-400">Trim Corr 1:</span> <span id="sim-f-trim1" class="font-bold font-mono">0.000</span></div>
+                                        <div><span class="block text-slate-400">Trim Corr 2:</span> <span id="sim-f-trim2" class="font-bold font-mono">0.000</span></div>
+                                        <div><span class="block text-slate-400">Total Trim:</span> <span id="sim-f-trim-tot" class="font-bold font-mono text-green-600">0.000</span></div>
+                                        <div><span class="block text-slate-400">Density Corr:</span> <span id="sim-f-dens-corr" class="font-bold font-mono text-red-600">0.000</span></div>
+                                    </div>
                                 </div>
 
                                 <!-- Deductibles & Density -->
-                                <div class="grid grid-cols-2 gap-3">
-                                    <div><label class="lbl">Deductibles (Total)</label><input type="number" id="sim-f-ded" class="inp" placeholder="Total Deduct"></div>
+                                <div class="bg-green-100 p-3 rounded mb-3">
+                                    <label class="lbl font-bold mb-2 block">Deductibles Breakdown</label>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <div><label class="text-[10px] text-slate-500 font-bold">FW</label><input type="number" id="sim-f-fw" class="inp" placeholder="0"></div>
+                                        <div><label class="text-[10px] text-slate-500 font-bold">BW</label><input type="number" id="sim-f-bw" class="inp" placeholder="0"></div>
+                                        <div><label class="text-[10px] text-slate-500 font-bold">FO</label><input type="number" id="sim-f-fo" class="inp" placeholder="0"></div>
+                                        <div><label class="text-[10px] text-slate-500 font-bold">DO</label><input type="number" id="sim-f-do" class="inp" placeholder="0"></div>
+                                        <div><label class="text-[10px] text-slate-500 font-bold">LO</label><input type="number" id="sim-f-lo" class="inp" placeholder="0"></div>
+                                        <div><label class="text-[10px] text-slate-500 font-bold">Other</label><input type="number" id="sim-f-other" class="inp" placeholder="0"></div>
+                                    </div>
+                                    <div class="mt-2 text-right text-xs font-bold text-slate-600">Total Deductibles: <span id="sim-f-ded-total">0.000</span> MT</div>
+                                </div>
+
+                                <div class="grid grid-cols-1 gap-3">
                                     <div><label class="lbl">Observed Density</label><input type="number" id="sim-f-dens" class="inp" placeholder="1.025"></div>
                                 </div>
 
@@ -1438,10 +1521,48 @@
             document.getElementById('sim-page-indicator').innerText = `Halaman ${simPage} / ${totalSimPages}`;
         }
 
+        function loadSimData() {
+            // Sample Data Placeholder - TO BE UPDATED WITH ACTUAL IMAGE DATA
+            // Ship Particulars
+            sV('sim-lbp', 178.00);
+            sV('sim-lightship', 5200.00);
+            sV('sim-df', 1.20);
+            sV('sim-dm', 0.00);
+            sV('sim-da', 4.50);
+            document.getElementById('sim-plimsoll').value = 'ahead';
+
+            // Initial Survey
+            sV('sim-i-fp', 3.45); sV('sim-i-mp', 3.50); sV('sim-i-ap', 3.55);
+            sV('sim-i-fs', 3.48); sV('sim-i-ms', 3.50); sV('sim-i-as', 3.58);
+            sV('sim-i-disp', 12500.0); 
+            sV('sim-i-lcf', 92.00); sV('sim-i-tpc', 25.00); sV('sim-i-mtc', 180.00);
+            sV('sim-i-density', 1.018);
+            sV('sim-i-fw', 150); sV('sim-i-bw', 2500); sV('sim-i-fo', 400);
+            sV('sim-i-do', 50); sV('sim-i-lo', 20); sV('sim-i-other', 5);
+
+            // Final Survey
+            sV('sim-f-fp', 9.50); sV('sim-f-mp', 9.60); sV('sim-f-ap', 9.70);
+            sV('sim-f-fs', 9.52); sV('sim-f-ms', 9.60); sV('sim-f-as', 9.72);
+            sV('sim-f-disp', 35000.0); 
+            sV('sim-f-lcf', 88.00); sV('sim-f-tpc', 32.00); sV('sim-f-mtc', 250.00);
+            sV('sim-f-density', 1.020);
+            sV('sim-f-fw', 100); sV('sim-f-bw', 100); sV('sim-f-fo', 350);
+            sV('sim-f-do', 40); sV('sim-f-lo', 20); sV('sim-f-other', 5);
+
+            setTimeout(calcSim, 500);
+            alert("Data sample telah dimuat! Silahkan edit sesuai angka pada gambar.");
+        }
+
         function calcSim() {
             // Reusing logic, but with manual inputs
             const lightship = parseFloat(document.getElementById('sim-lightship').value) || 0;
             const lbp = parseFloat(document.getElementById('sim-lbp').value) || 1; // Avoid div/0
+            
+            // Distances for correction
+            const dF = parseFloat(document.getElementById('sim-df').value) || 0;
+            const dM = parseFloat(document.getElementById('sim-dm').value) || 0;
+            const dA = parseFloat(document.getElementById('sim-da').value) || 0;
+            const plimsoll = document.getElementById('sim-plimsoll').value;
 
             function processSurvey(prefix) {
                 // Get Drafts
@@ -1452,53 +1573,83 @@
                 const ms = parseFloat(document.getElementById(prefix+'-ms').value) || 0;
                 const as = parseFloat(document.getElementById(prefix+'-as').value) || 0;
 
-                // Simple Means (assuming no LBP corrections needed as they are likely corrected drafts from problem)
-                // If the problem gives RAW drafts, we need Stem/Stern corrections. 
-                // For simplicity in this simulation tab, we assume user inputs Corrected Drafts or just Mean Drafts
-                // BUT, let's do the standard mean calculation:
                 const mF = (fp + fs) / 2;
                 const mM = (mp + ms) / 2;
                 const mA = (ap + as) / 2;
                 
+                // 1. Correct to Perpendiculars
+                let lbm = lbp - dF - dA; 
+                if(lbm <= 0) lbm = lbp; // Safety
+                
+                const appTrim = mA - mF;
+                const cF = (dF * appTrim) / lbm;
+                const cA = (dA * appTrim) / lbm;
+                const cM = (dM * appTrim) / lbm;
+                
+                const fCorr = mF - cF;
+                const aCorr = mA + cA;
+                const mCorr = (plimsoll === 'behind') ? mM - cM : mM + cM;
+
                 // QM Calculation (Mean of Means)
-                const meanOfMean = (mF + 6*mM + mA) / 8;
+                const meanOfMean = (fCorr + 6*mCorr + aCorr) / 8;
                 document.getElementById(prefix+'-mean-res').innerText = meanOfMean.toFixed(3);
+                
+                // Determine Q1 and Q2
+                // Logic: Round down to nearest 0.05 (or 0.01?) usually 0.05 or match Table step.
+                // Assuming Table Step is 0.05m like in standard tables (or 0.1m)
+                // Let's assume standard 0.05m interval for interpolation reference
+                const q1 = Math.floor(meanOfMean * 20) / 20;
+                const q2 = (q1 + 0.05);
+                
+                document.getElementById(prefix+'-q1').innerText = q1.toFixed(3);
+                document.getElementById(prefix+'-q2').innerText = q2.toFixed(3);
                 
                 // Hydro Inputs
                 const dispTab = parseFloat(document.getElementById(prefix+'-disp').value) || 0;
                 const lcf = parseFloat(document.getElementById(prefix+'-lcf').value) || 0; // from Midship usually
                 const tpc = parseFloat(document.getElementById(prefix+'-tpc').value) || 0;
                 const mtc = parseFloat(document.getElementById(prefix+'-mtc').value) || 0; // This is MTC difference or MTC? 
-                // In main app we calculate MTC difference. Here user inputs MTC or MTC Diff?
-                // Let's assume user inputs MTC value, and we need another MTC for diff? 
-                // Or usually in manual calculation forms, we calculate First Trim Corr and Second Trim Corr.
-                // First Trim Corr = Trim * LCF * TPC / LBP * 100
-                // Second Trim Corr = 50 * Trim^2 * (MTC1 - MTC2) / LBP.
-                // If user only inputs ONE MTC, we can't do Second Trim Correction accurately without the diff.
-                // However, often for small trims, Second Trim Correction is negligible.
-                // Let's use the input as "MTC Difference" if labeled so, or just MTC.
-                // Label says "MTC (MT.m/cm)". 
-                // Let's assume the user has to calculate corrections manually? No, system should do it.
-                // Let's ask user to input "MTC Diff" or handle it simply.
-                // For now, let's implement First Trim Correction & Density Correction which are major.
                 
-                const trim = mA - mF;
+                const trueTrim = aCorr - fCorr;
                 
                 // Corrections
-                const trimCorr1 = (trim * lcf * tpc * 100) / lbp;
-                const trimCorr2 = (50 * Math.pow(trim, 2) * mtc) / lbp; // Here assuming input IS the diff. If not, this is wrong.
-                // NOTE: Let's stick to basic Displacement + Density Correction if MTC is ambiguous.
-                // But user wants "match tab 1-3".
-                // Tab 1-3 calculates MTC1 and MTC2 from table.
-                // Let's Update label to "Diff MTC" to be clear.
+                let trimCorr1, trimCorr2;
+                
+                if (typeof isImperial !== 'undefined' && isImperial) {
+                    // Imperial Calculation
+                    // trim1 = (Trim * LCF * TPI * 12) / LBP
+                    trimCorr1 = (trueTrim * lcf * tpc * 12) / lbp;
+                    // trim2 = (6 * Trim^2 * DiffMTC) / LBP
+                    trimCorr2 = (6 * Math.pow(trueTrim, 2) * mtc) / lbp;
+                } else {
+                    // Metric Calculation
+                    trimCorr1 = (trueTrim * lcf * tpc * 100) / lbp;
+                    trimCorr2 = (50 * Math.pow(trueTrim, 2) * mtc) / lbp; 
+                }
                 
                 const dispTrimmed = dispTab + trimCorr1 + trimCorr2;
                 
                 const density = parseFloat(document.getElementById(prefix+'-dens').value) || 1.025;
                 const densCorr = dispTrimmed * (1.025 - density) / 1.025;
                 
+                // UPDATE CORRECTION DISPLAYS
+                document.getElementById(prefix+'-trim1').innerText = trimCorr1.toFixed(3);
+                document.getElementById(prefix+'-trim2').innerText = trimCorr2.toFixed(3);
+                document.getElementById(prefix+'-trim-tot').innerText = (trimCorr1 + trimCorr2).toFixed(3);
+                document.getElementById(prefix+'-dens-corr').innerText = densCorr.toFixed(3);
+
                 const netDisp = dispTrimmed - densCorr;
-                const deduct = parseFloat(document.getElementById(prefix+'-ded').value) || 0;
+                
+                // Calculate Deductibles Total
+                const fw = parseFloat(document.getElementById(prefix+'-fw').value) || 0;
+                const bw = parseFloat(document.getElementById(prefix+'-bw').value) || 0;
+                const fo = parseFloat(document.getElementById(prefix+'-fo').value) || 0;
+                const doVal = parseFloat(document.getElementById(prefix+'-do').value) || 0;
+                const lo = parseFloat(document.getElementById(prefix+'-lo').value) || 0;
+                const other = parseFloat(document.getElementById(prefix+'-other').value) || 0;
+                
+                const deduct = fw + bw + fo + doVal + lo + other;
+                document.getElementById(prefix+'-ded-total').innerText = deduct.toFixed(3);
                 
                 return { netDisp, deduct };
             }
