@@ -120,6 +120,7 @@
             <button onclick="switchTab('final')" id="btn-final" class="px-6 py-2 text-sm font-bold text-slate-500 hover:bg-white hover:text-blue-600 rounded-t-lg transition">2. Final Survey</button>
             <button onclick="switchTab('report')" id="btn-report" class="px-6 py-2 text-sm font-bold text-slate-500 hover:bg-white hover:text-blue-600 rounded-t-lg transition">3. Laporan Hasil</button>
             <button onclick="switchTab('guide')" id="btn-guide" class="px-6 py-2 text-sm font-bold text-slate-500 hover:bg-white hover:text-blue-600 rounded-t-lg transition">4. Panduan</button>
+            <button onclick="switchTab('latihan')" id="btn-latihan" class="px-6 py-2 text-sm font-bold text-slate-500 hover:bg-white hover:text-blue-600 rounded-t-lg transition">5. Latihan</button>
         </div>
     </div>
 
@@ -130,8 +131,11 @@
             <!-- Info Kapal -->
             <div class="glass-card">
                 <div class="p-4 grid md:grid-cols-2 gap-4 items-center">
-                   <div class="w-full">
+                   <div class="w-full flex gap-2">
                        <input type="text" id="ship-name" class="input-dummy text-left px-3 font-bold text-blue-800" value="MV. SITUBAR TEST" placeholder="NAMA KAPAL">
+                        <button onclick="toggleUnit()" id="btn-unit" class="bg-teal-100 text-teal-800 border border-teal-300 px-3 py-2 rounded-lg font-bold text-xs whitespace-nowrap hover:bg-teal-200 transition flex items-center gap-2 shadow-sm">
+                            <i class="fas fa-balance-scale"></i> METRIC SYSTEM
+                        </button>
                    </div>
                    <div class="text-right text-xs text-slate-400 hidden md:block">Skenario: Initial (Kosong)</div>
                 </div>
@@ -411,6 +415,58 @@
         <div id="guide" class="tab-content">
             <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
                 <h2 class="text-xl font-bold text-slate-800 mb-4">Panduan Lengkap Situbar</h2>
+
+                <div class="mb-6 bg-green-50 p-4 rounded border-l-4 border-green-500 text-sm text-slate-700">
+                    <h4 class="font-bold text-green-700 mb-2">Tahapan Pelaksanaan Draught Survey</h4>
+                    
+                    <div class="space-y-4">
+                        <!-- Tahap 1 -->
+                        <div class="bg-white p-3 rounded border border-green-100 shadow-sm">
+                            <span class="block font-bold text-green-800 mb-1">TAHAP I: Persiapan Dokumen</span>
+                            <p class="mb-2">Perhitungan draught survey dan mencari informasi kondisi kapal terkini. Dokumen-dokumen kapal meliputi:</p>
+                            <ul class="list-disc pl-5 grid grid-cols-1 md:grid-cols-2 gap-1 text-xs">
+                                <li>Ship Particular</li>
+                                <li>General Arrangement (GA Plan)</li>
+                                <li>Hydrostatic Table/Curve (Stability Booklet)</li>
+                                <li>Capacity Plan & Stowage</li>
+                                <li>Dead Weight Scale</li>
+                                <li>Tank Calibration Table (Sounding Table)</li>
+                                <li>Light Ship Information</li>
+                            </ul>
+                        </div>
+
+                        <!-- Tahap 2 -->
+                        <div class="bg-white p-3 rounded border border-green-100 shadow-sm">
+                            <span class="block font-bold text-green-800 mb-1">TAHAP II: Pembacaan Draft</span>
+                            <p class="mb-2">Pembacaan draught kapal di lambung kiri dan kanan pada 6 titik ukur:</p>
+                            <ul class="list-disc pl-5 text-xs">
+                                <li><strong>Forward (Haluan):</strong> Kiri & Kanan (Titik 1 & 2)</li>
+                                <li><strong>Midship (Tengah):</strong> Kiri & Kanan (Titik 3 & 4)</li>
+                                <li><strong>Afterpart (Buritan):</strong> Kiri & Kanan (Titik 5 & 6)</li>
+                            </ul>
+                            <div class="mt-2 p-2 bg-slate-100 rounded text-center text-xs text-slate-500 italic">
+                                <i class="fas fa-ship"></i> Ilustrasi: FWD (Depan) --- MID (Tengah) --- AFT (Belakang)
+                            </div>
+                        </div>
+
+                        <!-- Tahap 3 & 4 -->
+                        <div class="bg-white p-3 rounded border border-green-100 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <span class="block font-bold text-green-800 mb-1">TAHAP III: Pengukuran Cairan</span>
+                                <p class="text-xs">Melakukan pengukuran (sounding) cairan-cairan yang ada diatas kapal:</p>
+                                <ul class="list-disc pl-5 text-xs mt-1">
+                                    <li>Fresh Water & Ballast Water</li>
+                                    <li>Fuel Oil & Diesel Oil</li>
+                                    <li>Lube Oil & Hydraulic Oil</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <span class="block font-bold text-green-800 mb-1">TAHAP IV: Pengukuran Density</span>
+                                <p class="text-xs">Mengukur density air perairan (Sea Water) dan density cairan lainnya (Ballast/BBM) menggunakan Hydrometer yang terkalibrasi.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
                 <div class="overflow-x-auto mb-6">
                     <table class="min-w-full text-xs text-left border rounded-lg">
@@ -421,7 +477,7 @@
                             <tr>
                                 <td class="p-3 font-bold align-top">Draft Marks<br><span class="badge-visual">Input: Port/Stbd Draft</span></td>
                                 <td class="p-3 align-top">Angka kedalaman kapal di 6 titik ukur (Depan/Tengah/Belakang).</td>
-                                <td class="p-3 align-top"><a href="https://www.google.com/search?q=ship+draft+marks+reading&tbm=isch" target="_blank" class="text-blue-600 underline flex items-center gap-1"><i class="fas fa-binoculars"></i> Visual Lambung</a></td>
+                                <td class="p-3 align-top"><a href="https://drive.google.com/file/d/179a3n2mGPquDTudF8R99dEwGYhOv_khe/view?usp=drive_link" target="_blank" class="text-blue-600 underline flex items-center gap-1"><i class="fas fa-binoculars"></i> Visual Lambung</a></td>
                             </tr>
                             <tr>
                                 <td class="p-3 font-bold align-top">Koreksi Garis Tegak<br><span class="badge-doc">Input: dF, dM, dA</span></td>
@@ -474,6 +530,50 @@
                      <p class="mt-2 text-xs italic">*Ini digunakan untuk mendapatkan nilai perubahan MTC (dM/dZ) yang akurat.</p>
                 </div>
 
+                <div class="mb-6 bg-orange-50 p-4 rounded border-l-4 border-orange-500 text-sm text-slate-700">
+                    <h4 class="font-bold text-orange-700 mb-2">Metric vs Imperial System</h4>
+                    <p class="mb-3">Draught Survey dapat dilakukan menggunakan dua sistem satuan yang berbeda. Penting untuk mengetahui sistem mana yang digunakan oleh kapal (cek Hydrostatic Table).</p>
+                    
+                    <div class="overflow-x-auto bg-white rounded border border-orange-200 mb-3">
+                        <table class="min-w-full text-xs text-left">
+                            <thead class="bg-orange-100 font-bold text-orange-800">
+                                <tr>
+                                    <th class="p-2 border-r border-orange-200">Parameter</th>
+                                    <th class="p-2 border-r border-orange-200">Metric System (SI)</th>
+                                    <th class="p-2">Imperial System</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-orange-100">
+                                <tr>
+                                    <td class="p-2 font-semibold border-r border-orange-100">Draft/LBP</td>
+                                    <td class="p-2 border-r border-orange-100">Meters (m)</td>
+                                    <td class="p-2">Feet (ft) & Inches</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-semibold border-r border-orange-100">Berat (Weight)</td>
+                                    <td class="p-2 border-r border-orange-100">Metric Ton (MT) = 1000 kg</td>
+                                    <td class="p-2">Long Ton (LT) = 1016 kg</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-semibold border-r border-orange-100">Immersion</td>
+                                    <td class="p-2 border-r border-orange-100">TPC (Tonnes per Centimeter)</td>
+                                    <td class="p-2">TPI (Tons per Inch)</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-semibold border-r border-orange-100">Moment Trim</td>
+                                    <td class="p-2 border-r border-orange-100">MTC (Moment to Change 1cm)</td>
+                                    <td class="p-2">MTI (Moment to Change 1 inch)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="flex items-start gap-2 text-xs bg-white p-2 rounded border border-orange-200">
+                        <i class="fas fa-info-circle text-orange-500 mt-0.5"></i>
+                        <p><strong>Status Saat Ini:</strong> Sistem <span class="font-bold text-orange-700">METRIC</span> adalah standar internasional yang paling banyak digunakan di dunia maritim modern. Namun, sistem Imperial masih sering ditemukan pada kapal-kapal tua atau kapal yang beroperasi di wilayah tertentu (seperti Amerika Serikat).</p>
+                    </div>
+                </div>
+
                 <div class="space-y-2 text-sm">
                      <h4 class="font-bold text-slate-800">FAQ</h4>
                      <div class="bg-yellow-50 p-3 border border-yellow-200 rounded">
@@ -488,6 +588,60 @@
                         <span class="font-bold text-green-800">Q: Draft Initial vs Final?</span>
                         <p class="mt-1">Pasti beda. Selisih volume air yang dipindahkan adalah berat muatan.</p>
                      </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: LATIHAN -->
+        <div id="latihan" class="tab-content">
+            <div id="latihan-locked" class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg border border-slate-200 text-center mt-8">
+                 <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                     <i class="fas fa-lock text-blue-600 text-2xl"></i>
+                 </div>
+                 <h2 class="text-xl font-bold text-slate-800 mb-2">Mode Latihan Terkunci</h2>
+                 <p class="text-sm text-slate-500 mb-6">Silahkan masukkan kredensial khusus untuk mengakses soal latihan Draught Survey.</p>
+                 
+                 <div class="space-y-4 text-left">
+                     <div>
+                         <label class="block text-xs font-bold text-slate-500 mb-1">USERNAME</label>
+                         <input type="text" id="lat-user" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Username">
+                     </div>
+                     <div>
+                         <label class="block text-xs font-bold text-slate-500 mb-1">PASSWORD</label>
+                         <input type="password" id="lat-pass" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Password" onkeypress="if(event.key==='Enter') checkLatihanAuth()">
+                     </div>
+                     <div id="lat-error" class="hidden text-xs text-red-600 font-bold bg-red-50 p-2 rounded border border-red-100 flex items-center gap-2">
+                         <i class="fas fa-exclamation-triangle"></i> <span>Username atau Password Salah!</span>
+                     </div>
+                     <button onclick="checkLatihanAuth()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow transition transform active:scale-95">BUKA SOAL LATIHAN</button>
+                 </div>
+            </div>
+
+            <div id="latihan-unlocked" class="hidden space-y-6">
+                <div class="glass-card">
+                    <div class="card-header justify-between">
+                         <span><i class="fas fa-chalkboard-teacher text-blue-500"></i> Generator Soal Latihan</span>
+                         <button onclick="generateLatihanSoal()" class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-xs font-bold hover:bg-blue-200 transition">
+                             <i class="fas fa-sync-alt"></i> Soal Baru
+                         </button>
+                    </div>
+                    <div class="p-6">
+                         <div id="soal-container" class="bg-slate-50 p-6 rounded-lg border border-slate-200 mb-6">
+                             <div class="text-center py-8">
+                                 <i class="fas fa-clipboard-list text-4xl text-slate-300 mb-4"></i>
+                                 <p class="text-slate-500 italic">Klik tombol "Soal Baru" di pojok kanan atas untuk memulai latihan.</p>
+                             </div>
+                         </div>
+                         
+                         <div id="answer-section" class="hidden opacity-0 transition-opacity duration-500">
+                             <label class="block text-sm font-bold text-slate-700 mb-2">Jawaban Anda:</label>
+                             <div class="flex gap-2">
+                                 <input type="number" step="0.001" id="user-answer" class="flex-1 border border-slate-300 rounded-lg px-4 py-2 font-mono text-lg font-bold text-blue-600 text-center" placeholder="0.000">
+                                 <button onclick="checkAnswer()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-bold shadow transition transform active:scale-95">CEK JAWABAN</button>
+                             </div>
+                             <div id="feedback-msg" class="mt-4 hidden p-4 rounded-lg text-sm font-bold flex items-center gap-3"></div>
+                         </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -540,11 +694,50 @@
     <script>
         // --- LOGIC UTAMA ---
         let currentConstant = 0; 
+        let isImperial = false;
+
+        function toggleUnit() {
+            isImperial = !isImperial;
+            const btn = document.getElementById('btn-unit');
+            if(isImperial) {
+                btn.innerHTML = '<i class="fas fa-ruler-combined"></i> IMPERIAL SYSTEM';
+                btn.className = "bg-rose-100 text-rose-800 border border-rose-300 px-3 py-2 rounded-lg font-bold text-xs whitespace-nowrap hover:bg-rose-200 transition flex items-center gap-2 shadow-sm";
+            } else {
+                btn.innerHTML = '<i class="fas fa-balance-scale"></i> METRIC SYSTEM';
+                btn.className = "bg-teal-100 text-teal-800 border border-teal-300 px-3 py-2 rounded-lg font-bold text-xs whitespace-nowrap hover:bg-teal-200 transition flex items-center gap-2 shadow-sm";
+            }
+            updateLabels();
+            resetAllData(); // Reset data to avoid confusion with units
+            alert("Mode Unit diubah ke " + (isImperial ? "IMPERIAL (Feet/Long Ton)" : "METRIC (Meters/Metric Ton)") + ".\nData dikosongkan.");
+        }
+
+        function updateLabels() {
+            // Update placeholders and labels dynamically
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(i => {
+                if(i.placeholder.includes('Disp')) i.placeholder = isImperial ? 'Disp (LT)' : 'Disp (MT)';
+                if(i.placeholder.includes('TPC')) i.placeholder = isImperial ? 'TPI' : 'TPC';
+                if(i.placeholder.includes('MTC')) i.placeholder = isImperial ? 'MTI' : 'MTC';
+            });
+            
+            // Density Label
+            const densLabels = document.querySelectorAll('label');
+            densLabels.forEach(l => {
+                if(l.innerText.includes('DENSITY')) l.innerText = isImperial ? 'DENSITY (SG)' : 'DENSITY (MT/M3)';
+                if(l.innerText.includes('LBP')) l.innerText = isImperial ? 'LBP (Feet)' : 'LBP (Meters)';
+            });
+
+            // Update Report Units
+            const cargoUnit = document.getElementById('val-cargo');
+            if(cargoUnit && cargoUnit.innerText.includes('MT')) {
+                 // update logic will handle this on calc
+            }
+        }
 
         function switchTab(id) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            ['initial','final','report','guide'].forEach(t => {
+            ['initial','final','report','guide','latihan'].forEach(t => {
                  const btn = document.getElementById('btn-'+t);
                  if(t===id) {
                      btn.className = 'px-5 py-3 text-sm font-bold text-blue-600 border-b-2 border-blue-600 transition flex items-center gap-2 bg-white rounded-t-lg';
@@ -552,6 +745,120 @@
                      btn.className = 'px-5 py-3 text-sm font-bold text-slate-500 hover:text-blue-600 transition flex items-center gap-2';
                  }
             });
+        }
+
+        // --- LATIHAN LOGIC ---
+        let currentSoal = null;
+
+        function checkLatihanAuth() {
+            const u = document.getElementById('lat-user').value;
+            const p = document.getElementById('lat-pass').value;
+            const err = document.getElementById('lat-error');
+            
+            if(u.toLowerCase() === 'pdad' && p.toLowerCase() === 'beacukai') {
+                document.getElementById('latihan-locked').classList.add('hidden');
+                document.getElementById('latihan-unlocked').classList.remove('hidden');
+            } else {
+                err.classList.remove('hidden');
+                setTimeout(() => err.classList.add('hidden'), 2000);
+            }
+        }
+
+        function generateLatihanSoal() {
+            const type = Math.floor(Math.random() * 3); // 0: QM, 1: Trim1, 2: NetDisp
+            let question = "", answer = 0, hint = "";
+            
+            if(type === 0) { // Calculate Quarter Mean
+                const fwd = parseFloat(r(3,5));
+                const mid = parseFloat(r(4,6));
+                const aft = parseFloat(r(5,7));
+                
+                question = `<div class="text-center space-y-4">
+                    <h3 class="font-bold text-lg text-slate-800">Hitung Quarter Mean (QM)</h3>
+                    <div class="grid grid-cols-3 gap-2 text-sm font-mono bg-white p-4 rounded border border-slate-200">
+                        <div><div class="text-slate-400 text-xs">Fwd Corrected</div><div class="font-bold text-blue-600">${fwd.toFixed(3)}</div></div>
+                        <div><div class="text-slate-400 text-xs">Mid Corrected</div><div class="font-bold text-blue-600">${mid.toFixed(3)}</div></div>
+                        <div><div class="text-slate-400 text-xs">Aft Corrected</div><div class="font-bold text-blue-600">${aft.toFixed(3)}</div></div>
+                    </div>
+                    <p class="text-xs text-slate-500">Rumus: (Fwd + 6*Mid + Aft) / 8</p>
+                </div>`;
+                
+                answer = (fwd + 6*mid + aft) / 8;
+                hint = "Ingat, Midship dikalikan 6!";
+            
+            } else if(type === 1) { // Calculate First Trim Correction
+                const trim = parseFloat(r(0.5, 2.0));
+                const lcf = parseFloat(r(70, 75));
+                const tpc = parseFloat(r(30, 40));
+                const lbp = parseFloat(r(170, 180));
+                
+                question = `<div class="text-center space-y-4">
+                    <h3 class="font-bold text-lg text-slate-800">Hitung Koreksi Trim Pertama (Metric)</h3>
+                    <div class="grid grid-cols-2 gap-4 text-sm font-mono bg-white p-4 rounded border border-slate-200">
+                        <div class="text-left"><span class="text-slate-500">True Trim:</span> <span class="font-bold text-blue-600">${trim.toFixed(2)} m</span></div>
+                        <div class="text-left"><span class="text-slate-500">LCF:</span> <span class="font-bold text-blue-600">${lcf.toFixed(2)} m</span></div>
+                        <div class="text-left"><span class="text-slate-500">TPC:</span> <span class="font-bold text-blue-600">${tpc.toFixed(2)} MT/cm</span></div>
+                        <div class="text-left"><span class="text-slate-500">LBP:</span> <span class="font-bold text-blue-600">${lbp.toFixed(2)} m</span></div>
+                    </div>
+                    <p class="text-xs text-slate-500">Rumus: (Trim * LCF * TPC * 100) / LBP</p>
+                </div>`;
+                
+                answer = (trim * lcf * tpc * 100) / lbp;
+                hint = "Hati-hati dengan pengali 100 untuk konversi cm ke m.";
+            
+            } else { // Calculate Net Displacement
+                const disp = parseFloat(r(30000, 40000));
+                const dens = parseFloat(r(1.000, 1.020, 3));
+                
+                question = `<div class="text-center space-y-4">
+                    <h3 class="font-bold text-lg text-slate-800">Hitung Net Displacement (Koreksi Density)</h3>
+                    <div class="grid grid-cols-2 gap-4 text-sm font-mono bg-white p-4 rounded border border-slate-200">
+                        <div class="text-left"><span class="text-slate-500">Disp (Hydro):</span> <span class="font-bold text-blue-600">${disp.toFixed(1)} MT</span></div>
+                        <div class="text-left"><span class="text-slate-500">Observed Density:</span> <span class="font-bold text-blue-600">${dens.toFixed(3)}</span></div>
+                    </div>
+                    <p class="text-xs text-slate-500">Std Density: 1.025. Rumus: Disp * (1.025 - Dens) / 1.025</p>
+                </div>`;
+                
+                // Correction
+                const corr = disp * (1.025 - dens) / 1.025;
+                answer = disp - corr; // Net Disp
+                hint = "Hitung koreksi density dulu, lalu kurangkan dari Displacement awal.";
+            }
+
+            currentSoal = { answer: answer, hint: hint };
+            document.getElementById('soal-container').innerHTML = question;
+            document.getElementById('answer-section').classList.remove('hidden', 'opacity-0');
+            document.getElementById('answer-section').classList.add('opacity-100');
+            
+            // Reset fields
+            document.getElementById('user-answer').value = '';
+            document.getElementById('feedback-msg').classList.add('hidden');
+            document.getElementById('user-answer').classList.remove('border-red-500', 'border-green-500', 'bg-red-50', 'bg-green-50');
+        }
+
+        function checkAnswer() {
+            if(!currentSoal) return;
+            const userVal = parseFloat(document.getElementById('user-answer').value);
+            const correctVal = currentSoal.answer;
+            const tolerance = 0.05 * correctVal; // 5% tolerance
+            
+            const msgEl = document.getElementById('feedback-msg');
+            const inputEl = document.getElementById('user-answer');
+            
+            msgEl.classList.remove('hidden', 'bg-green-100', 'text-green-700', 'bg-red-100', 'text-red-700');
+            inputEl.classList.remove('border-red-500', 'border-green-500', 'bg-red-50', 'bg-green-50');
+            
+            if(Math.abs(userVal - correctVal) <= Math.abs(tolerance) || Math.abs(userVal - correctVal) < 0.1) {
+                // Correct
+                msgEl.classList.add('bg-green-100', 'text-green-700');
+                msgEl.innerHTML = `<i class="fas fa-check-circle text-xl"></i> <div><strong>Benar!</strong><br>Jawaban presisi: ${correctVal.toFixed(3)}</div>`;
+                inputEl.classList.add('border-green-500', 'bg-green-50');
+            } else {
+                // Incorrect
+                msgEl.classList.add('bg-red-100', 'text-red-700');
+                msgEl.innerHTML = `<i class="fas fa-times-circle text-xl"></i> <div><strong>Salah.</strong><br>${currentSoal.hint}</div>`;
+                inputEl.classList.add('border-red-500', 'bg-red-50');
+            }
         }
 
         // Helper
@@ -568,52 +875,96 @@
         }
 
         function generateAllData() {
-            // Ship Data
-            const lbp = r(170,185); const ls = r(5000,5600); const dens = 1.025;
-            sV('ship-name', 'MV. GEN-' + Math.floor(Math.random()*1000));
-            
-            // Variasi Koreksi (Sekarang diacak tiap generate)
-            const dF = r(0.50, 2.50); const dM = r(0.00, 1.50); const dA = r(3.00, 6.00);
+            if(isImperial) {
+                // Imperial Generation
+                const lbp = r(560,600); const ls = r(4900,5500); const dens = 1.025; // LS in LT
+                sV('ship-name', 'MV. IMPERIAL-' + Math.floor(Math.random()*1000));
+                
+                const dF = r(1.5, 8.0); const dM = r(0.0, 5.0); const dA = r(10.0, 20.0); // Feet
 
-            // Set Common Data
-            ['i','f'].forEach(p => {
-                sV(p+'-lbp', lbp); sV(p+'-lightship', ls); sV(p+'-density', dens);
-                sV(p+'-df', dF); sV(p+'-dm', dM); sV(p+'-da', dA);
-                // Randomize ALL Deductibles
-                sV(p+'-fw', r(50,200)); sV(p+'-bw', p==='i'?r(2000,4000):r(100,500)); 
-                sV(p+'-fo', r(300,600)); sV(p+'-do', r(40,100)); 
-                sV(p+'-lo', r(10,50)); sV(p+'-other', r(0,10));
-            });
+                ['i','f'].forEach(p => {
+                    sV(p+'-lbp', lbp); sV(p+'-lightship', ls); sV(p+'-density', dens);
+                    sV(p+'-df', dF); sV(p+'-dm', dM); sV(p+'-da', dA);
+                    sV(p+'-fw', r(50,200)); sV(p+'-bw', p==='i'?r(2000,4000):r(100,500)); 
+                    sV(p+'-fo', r(300,600)); sV(p+'-do', r(40,100)); 
+                    sV(p+'-lo', r(10,50)); sV(p+'-other', r(0,10));
+                });
 
-            // Initial Drafts
-            const iD = parseFloat(r(3.2, 3.8));
-            sV('i-fp', (iD-0.2).toFixed(2)); sV('i-mp', iD.toFixed(2)); sV('i-ap', (iD+0.4).toFixed(2));
-            sV('i-fs', (iD-0.18).toFixed(2)); sV('i-ms', iD.toFixed(2)); sV('i-as', (iD+0.42).toFixed(2));
-            
-            // Hydro I
-            const qmI = parseFloat((iD + 0.1).toFixed(2));
-            const iQ1 = Math.floor(qmI * 20) / 20; const iQ2 = (iQ1 + 0.05).toFixed(2);
-            sV('i-q1', iQ1); sV('i-q2', iQ2);
-            sV('i-disp1', (iQ1*2900).toFixed(1)); sV('i-disp2', (iQ2*2900+50).toFixed(1));
-            sV('i-lcf1', r(80,82)); sV('i-lcf2', r(80,82));
-            sV('i-tpc1', r(28,30)); sV('i-tpc2', r(28,30));
-            sV('i-mtc2-1', r(200,210)); sV('i-mtc2-2', r(205,215)); 
-            sV('i-mtc1-1', r(200,210)); sV('i-mtc1-2', r(205,215));
+                // Initial Drafts (Feet)
+                const iD = parseFloat(r(10.5, 12.5));
+                sV('i-fp', (iD-0.6).toFixed(2)); sV('i-mp', iD.toFixed(2)); sV('i-ap', (iD+1.2).toFixed(2));
+                sV('i-fs', (iD-0.5).toFixed(2)); sV('i-ms', iD.toFixed(2)); sV('i-as', (iD+1.3).toFixed(2));
+                
+                // Hydro I (Imperial)
+                const qmI = parseFloat((iD + 0.3).toFixed(2));
+                const iQ1 = Math.floor(qmI * 4) / 4; const iQ2 = (iQ1 + 0.25).toFixed(2); // Quarter foot steps
+                sV('i-q1', iQ1); sV('i-q2', iQ2);
+                sV('i-disp1', (iQ1*900).toFixed(1)); sV('i-disp2', (iQ2*900+100).toFixed(1)); // Approx disp per ft
+                sV('i-lcf1', r(260,270)); sV('i-lcf2', r(260,270));
+                sV('i-tpc1', r(70,75)); sV('i-tpc2', r(70,75)); // TPI
+                sV('i-mtc2-1', r(1600,1700)); sV('i-mtc2-2', r(1600,1700)); // MTI
+                sV('i-mtc1-1', r(1600,1700)); sV('i-mtc1-2', r(1600,1700));
 
-            // Final Drafts
-            const fD = parseFloat(r(9.0, 9.8));
-            sV('f-fp', (fD-0.2).toFixed(2)); sV('f-mp', fD.toFixed(2)); sV('f-ap', (fD+0.4).toFixed(2));
-            sV('f-fs', (fD-0.2).toFixed(2)); sV('f-ms', fD.toFixed(2)); sV('f-as', (fD+0.4).toFixed(2));
-            
-            // Hydro F
-            const qmF = parseFloat((fD + 0.1).toFixed(2));
-            const fQ1 = Math.floor(qmF * 20) / 20; const fQ2 = (fQ1 + 0.05).toFixed(2);
-            sV('f-q1', fQ1); sV('f-q2', fQ2);
-            sV('f-disp1', (fQ1*3800).toFixed(1)); sV('f-disp2', (fQ2*3800+50).toFixed(1));
-            sV('f-lcf1', r(72,75)); sV('f-lcf2', r(72,75));
-            sV('f-tpc1', r(38,42)); sV('f-tpc2', r(38,42));
-            sV('f-mtc2-1', r(300,320)); sV('f-mtc2-2', r(305,325)); 
-            sV('f-mtc1-1', r(300,320)); sV('f-mtc1-2', r(305,325));
+                // Final Drafts (Feet)
+                const fD = parseFloat(r(29.5, 32.0));
+                sV('f-fp', (fD-0.6).toFixed(2)); sV('f-mp', fD.toFixed(2)); sV('f-ap', (fD+1.2).toFixed(2));
+                sV('f-fs', (fD-0.6).toFixed(2)); sV('f-ms', fD.toFixed(2)); sV('f-as', (fD+1.2).toFixed(2));
+                
+                // Hydro F
+                const qmF = parseFloat((fD + 0.3).toFixed(2));
+                const fQ1 = Math.floor(qmF * 4) / 4; const fQ2 = (fQ1 + 0.25).toFixed(2);
+                sV('f-q1', fQ1); sV('f-q2', fQ2);
+                sV('f-disp1', (fQ1*1200).toFixed(1)); sV('f-disp2', (fQ2*1200+100).toFixed(1));
+                sV('f-lcf1', r(240,250)); sV('f-lcf2', r(240,250));
+                sV('f-tpc1', r(95,105)); sV('f-tpc2', r(95,105)); // TPI
+                sV('f-mtc2-1', r(2400,2500)); sV('f-mtc2-2', r(2400,2500)); 
+                sV('f-mtc1-1', r(2400,2500)); sV('f-mtc1-2', r(2400,2500));
+
+            } else {
+                // Metric Generation
+                const lbp = r(170,185); const ls = r(5000,5600); const dens = 1.025;
+                sV('ship-name', 'MV. SITUBAR TEST');
+                
+                const dF = r(0.50, 2.50); const dM = r(0.00, 1.50); const dA = r(3.00, 6.00);
+
+                ['i','f'].forEach(p => {
+                    sV(p+'-lbp', lbp); sV(p+'-lightship', ls); sV(p+'-density', dens);
+                    sV(p+'-df', dF); sV(p+'-dm', dM); sV(p+'-da', dA);
+                    sV(p+'-fw', r(50,200)); sV(p+'-bw', p==='i'?r(2000,4000):r(100,500)); 
+                    sV(p+'-fo', r(300,600)); sV(p+'-do', r(40,100)); 
+                    sV(p+'-lo', r(10,50)); sV(p+'-other', r(0,10));
+                });
+
+                // Initial Drafts
+                const iD = parseFloat(r(3.2, 3.8));
+                sV('i-fp', (iD-0.2).toFixed(2)); sV('i-mp', iD.toFixed(2)); sV('i-ap', (iD+0.4).toFixed(2));
+                sV('i-fs', (iD-0.18).toFixed(2)); sV('i-ms', iD.toFixed(2)); sV('i-as', (iD+0.42).toFixed(2));
+                
+                // Hydro I
+                const qmI = parseFloat((iD + 0.1).toFixed(2));
+                const iQ1 = Math.floor(qmI * 20) / 20; const iQ2 = (iQ1 + 0.05).toFixed(2);
+                sV('i-q1', iQ1); sV('i-q2', iQ2);
+                sV('i-disp1', (iQ1*2900).toFixed(1)); sV('i-disp2', (iQ2*2900+50).toFixed(1));
+                sV('i-lcf1', r(80,82)); sV('i-lcf2', r(80,82));
+                sV('i-tpc1', r(28,30)); sV('i-tpc2', r(28,30));
+                sV('i-mtc2-1', r(200,210)); sV('i-mtc2-2', r(205,215)); 
+                sV('i-mtc1-1', r(200,210)); sV('i-mtc1-2', r(205,215));
+
+                // Final Drafts
+                const fD = parseFloat(r(9.0, 9.8));
+                sV('f-fp', (fD-0.2).toFixed(2)); sV('f-mp', fD.toFixed(2)); sV('f-ap', (fD+0.4).toFixed(2));
+                sV('f-fs', (fD-0.2).toFixed(2)); sV('f-ms', fD.toFixed(2)); sV('f-as', (fD+0.4).toFixed(2));
+                
+                // Hydro F
+                const qmF = parseFloat((fD + 0.1).toFixed(2));
+                const fQ1 = Math.floor(qmF * 20) / 20; const fQ2 = (fQ1 + 0.05).toFixed(2);
+                sV('f-q1', fQ1); sV('f-q2', fQ2);
+                sV('f-disp1', (fQ1*3800).toFixed(1)); sV('f-disp2', (fQ2*3800+50).toFixed(1));
+                sV('f-lcf1', r(72,75)); sV('f-lcf2', r(72,75));
+                sV('f-tpc1', r(38,42)); sV('f-tpc2', r(38,42));
+                sV('f-mtc2-1', r(300,320)); sV('f-mtc2-2', r(305,325)); 
+                sV('f-mtc1-1', r(300,320)); sV('f-mtc1-2', r(305,325));
+            }
 
             setTimeout(() => { calc('initial'); setTimeout(()=>calc('final'), 100); }, 200);
         }
@@ -656,8 +1007,9 @@
                 const ls = gV('f-lightship');
                 const cargo = res.netDisp - (ls + res.deduct + CONSTANT);
                 
-                sT('val-cargo', cargo + " MT");
-                sT('rpt-cargo', cargo + " MT");
+                const unit = isImperial ? " LT" : " MT";
+                sT('val-cargo', cargo + unit);
+                sT('rpt-cargo', cargo + unit);
                 sT('rpt-f-ls', ls);
                 sT('rpt-f-const', CONSTANT);
                 
@@ -696,8 +1048,19 @@
             // 4. Corrections
             // Handle LBP zero safety
             const safeLBP = lbp > 0 ? lbp : 1; 
-            const trim1 = (trueTrim * lcf * tpc * 100)/safeLBP;
-            const trim2 = (50 * Math.pow(trueTrim,2) * (mtc1 - mtc2))/safeLBP;
+            let trim1, trim2;
+
+            if (isImperial) {
+                // Imperial Calculation
+                // trueTrim in Feet, lcf in Feet, tpc (TPI) in LT/in, safeLBP in Feet
+                trim1 = (trueTrim * lcf * tpc * 12) / safeLBP; 
+                // Nemoto Imperial: 6 * Tr^2 * Diff / LBP (Assuming MTI diff over 1 ft)
+                trim2 = (6 * Math.pow(trueTrim,2) * (mtc1 - mtc2))/safeLBP;
+            } else {
+                // Metric Calculation
+                trim1 = (trueTrim * lcf * tpc * 100)/safeLBP;
+                trim2 = (50 * Math.pow(trueTrim,2) * (mtc1 - mtc2))/safeLBP;
+            }
             
             const dispTrimmed = dispTab + trim1 + trim2;
             const densCorr = dispTrimmed * (1.025 - dens)/1.025;
